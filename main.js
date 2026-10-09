@@ -207,23 +207,37 @@
         const geo = new THREE.PlaneGeometry(W, H, 240, Math.round(240 / ar));
         const mat = new THREE.ShaderMaterial({
           transparent: true, depthWrite: true,
-          uniforms: { map: { value: col }, depthMap: { value: dep }, relief: { value: 0.95 }, light: { value: new THREE.Vector2(0, 0) } },
-          vertexShader: `uniform sampler2D depthMap; uniform float relief; varying vec2 vUv; varying float vD;
-            void main(){ vUv = uv; float d = texture2D(depthMap, uv).r; vD = d;
+          uniforms: { map: { value: col }, depthMap: { value: dep }, relief: { value: 0.95 }, light: { value: new THREE.Vector2(0, 0) }, time: { value: 0 } },
+          vertexShader: `uniform sampler2D depthMap; uniform float relief; varying vec2 vUv;
+            void main(){ vUv = uv; float d = texture2D(depthMap, uv).r;
               vec3 p = position; p.z += (d - 0.5) * relief;
               gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0); }`,
-          fragmentShader: `uniform sampler2D map; uniform vec2 light; varying vec2 vUv; varying float vD;
+          fragmentShader: `uniform sampler2D map; uniform sampler2D depthMap; uniform vec2 light; uniform float time; varying vec2 vUv;
             void main(){ vec4 c = texture2D(map, vUv); if (c.a < 0.35) discard;
-              /* subtle moving sheen: brightens the side of the relief facing the cursor */
-              float sheen = clamp(dot(normalize(vec3(light, 0.6)), vec3(dFdx(vD) * 60.0, dFdy(vD) * 60.0, 1.0)), 0.0, 1.0);
-              c.rgb *= 0.96 + sheen * 0.14;
+              /* surface normal from the depth map */
+              float e = 3.0 / 1024.0;
+              float dx = texture2D(depthMap, vUv + vec2(e, 0.0)).r - texture2D(depthMap, vUv - vec2(e, 0.0)).r;
+              float dy = texture2D(depthMap, vUv + vec2(0.0, e)).r - texture2D(depthMap, vUv - vec2(0.0, e)).r;
+              vec3 n = normalize(vec3(-dx * 9.0, -dy * 9.0, 1.0));
+              /* key light from the top-left that slowly slides up and down, nudged by the cursor */
+              float sw = sin(time * 0.45);
+              vec3 L = normalize(vec3(-0.75 + light.x * 0.25, 0.55 + sw * 0.5 - light.y * 0.2, 0.75));
+              float diff = max(dot(n, L), 0.0);
+              vec3 V = vec3(0.0, 0.0, 1.0);
+              float spec = pow(max(dot(reflect(-L, n), V), 0.0), 18.0);
+              vec3 tint = vec3(0.82, 0.90, 1.0);
+              float lum = dot(c.rgb, vec3(0.299, 0.587, 0.114));
+              c.rgb = c.rgb * (0.82 + diff * 0.46) + tint * spec * (0.2 + lum * 0.25);
+              /* soft blue rim on the left edge (continues the site's blue glow) */
+              float rim = pow(1.0 - max(n.z, 0.0), 2.0) * max(-n.x, 0.0);
+              c.rgb += vec3(0.18, 0.48, 1.0) * rim * 0.35;
               gl_FragColor = vec4(c.rgb, c.a);
               #include <colorspace_fragment>
             }`
         });
         mat.extensions = { derivatives: true };
         const mesh = new THREE.Mesh(geo, mat); pivot.add(mesh);
-        wrap._light = mat.uniforms.light.value;
+        wrap._light = mat.uniforms.light.value; wrap._time = mat.uniforms.time;
         wrap.classList.add('ready');
       }).catch(() => {});
     } else if (GLTFLoader) {
@@ -266,6 +280,7 @@
       requestAnimationFrame(loop);
       if (!visible || document.hidden) return;
       const t = (now - t0) / 1000;
+      if (wrap._time) wrap._time.value = t;
       const idleY = Math.sin(t * 0.6) * (wrap.dataset.depth ? 0.035 : 0.09), idleX = Math.sin(t * 0.9 + 1) * (wrap.dataset.depth ? 0.02 : 0.04), bob = Math.sin(t * 1.1) * 0.03;
       ry += ((amp.baseY + ty + idleY) - ry) * k;
       rx += ((amp.baseX + tx + idleX) - rx) * k;
