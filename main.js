@@ -168,109 +168,84 @@
 
   $$('.mrev').forEach(el => el.addEventListener('transitionend', () => { if (el.classList.contains('in')) el.style.willChange = 'auto'; }));
 
-  /* ---------- Hero 3D ring ---------- */
-  const visual = $('.hero-visual');
-  if (visual) {
-    const lowEnd = (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2) || (navigator.deviceMemory && navigator.deviceMemory <= 2);
-    const canvas = $('canvas', visual);
-    let gl = null;
-    try { gl = canvas.getContext('webgl2') || canvas.getContext('webgl'); } catch (e) {}
-    if (!gl || lowEnd) visual.classList.add('fallback');
-    else {
-      import('https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js')
-        .then(THREE => initRing(THREE, canvas, visual))
-        .catch(() => visual.classList.add('fallback'));
+  /* ---------- Hero 3D avatar (GLB, follows the cursor) ---------- */
+  const fig = $('.hero-figure');
+  if (fig && $('canvas', fig)) {
+    const canvas = $('canvas', fig);
+    const fine = matchMedia('(pointer:fine)').matches && matchMedia('(min-width:1024px)').matches;
+    const reduced = matchMedia('(prefers-reduced-motion:reduce)').matches;
+    const lowEnd = (navigator.deviceMemory && navigator.deviceMemory <= 2);
+    let gl = null; try { gl = canvas.getContext('webgl2') || canvas.getContext('webgl'); } catch (e) {}
+    if (gl && fine && !reduced && !lowEnd && fig.dataset.model) {
+      Promise.all([import('three'), import('three/addons/loaders/GLTFLoader.js')])
+        .then(([THREE, { GLTFLoader }]) => initAvatar(THREE, GLTFLoader, canvas, fig))
+        .catch(() => {});
     }
   }
 
-  function initRing(THREE, canvas, wrap) {
+  function initAvatar(THREE, GLTFLoader, canvas, wrap) {
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.0;
+    renderer.toneMappingExposure = 0.95;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 50);
-    camera.position.set(0, 0, 7.2);
+    const camera = new THREE.PerspectiveCamera(26, 1, 0.1, 50);
+    camera.position.set(0, 0.05, 6.4);
 
+    /* studio environment: white key band + blue band, drawn to a canvas */
     const env = document.createElement('canvas'); env.width = 1024; env.height = 512;
     const c = env.getContext('2d');
-    c.fillStyle = '#05070c'; c.fillRect(0, 0, 1024, 512);
+    c.fillStyle = '#0b1020'; c.fillRect(0, 0, 1024, 512);
     const band = (x, y, w, h, color, blur) => { c.save(); c.filter = `blur(${blur}px)`; c.fillStyle = color; c.fillRect(x, y, w, h); c.restore(); };
-    band(0, 110, 1024, 14, 'rgba(77,182,255,.9)', 14);
-    band(0, 330, 1024, 22, 'rgba(30,91,255,.8)', 22);
-    band(150, 40, 150, 330, 'rgba(255,255,255,.9)', 26);
-    band(660, 150, 110, 260, 'rgba(170,220,255,.75)', 24);
-    band(880, 30, 60, 440, 'rgba(77,182,255,.7)', 30);
-    band(0, 440, 1024, 60, '#02040a', 20);
-    const envTex = new THREE.CanvasTexture(env);
-    envTex.mapping = THREE.EquirectangularReflectionMapping;
-    envTex.colorSpace = THREE.SRGBColorSpace;
-    const pmrem = new THREE.PMREMGenerator(renderer);
-    scene.environment = pmrem.fromEquirectangular(envTex).texture;
-    envTex.dispose(); pmrem.dispose();
+    band(560, 70, 300, 60, 'rgba(255,255,255,.95)', 30);
+    band(0, 200, 300, 120, 'rgba(47,123,255,.9)', 40);
+    band(700, 330, 324, 40, 'rgba(120,170,255,.5)', 30);
+    const envTex = new THREE.CanvasTexture(env); envTex.mapping = THREE.EquirectangularReflectionMapping; envTex.colorSpace = THREE.SRGBColorSpace;
+    const pmrem = new THREE.PMREMGenerator(renderer); scene.environment = pmrem.fromEquirectangular(envTex).texture; pmrem.dispose();
 
-    const geo = new THREE.TorusGeometry(1.55, 0.5, 128, 256);
-    const mat = new THREE.MeshPhysicalMaterial({
-      color: 0x05070d, metalness: 0.96, roughness: 0.2,
-      clearcoat: 1, clearcoatRoughness: 0.12, envMapIntensity: 1.05,
-      sheen: 0.25, sheenColor: new THREE.Color(0x4DB6FF)
+    scene.add(new THREE.AmbientLight(0x6f87b8, 0.18));
+    const key = new THREE.DirectionalLight(0xffffff, 2.0); key.position.set(2.2, 3, 2.6); scene.add(key);
+    const rim = new THREE.DirectionalLight(0x2f7bff, 4.2); rim.position.set(-3.5, 1.4, -1.2); scene.add(rim);
+    const fill = new THREE.DirectionalLight(0xffd9b0, 0.35); fill.position.set(0.5, -2.5, 2.5); scene.add(fill);
+
+    const pivot = new THREE.Group(); scene.add(pivot);
+    const loader = new GLTFLoader();
+    loader.load(wrap.dataset.model, (gltf) => {
+      const model = gltf.scene;
+      const box = new THREE.Box3().setFromObject(model);
+      const size = box.getSize(new THREE.Vector3()); const center = box.getCenter(new THREE.Vector3());
+      const s = 2.6 / Math.max(size.x, size.y, size.z);
+      model.position.sub(center).multiplyScalar(s); model.scale.setScalar(s);
+      model.traverse(o => { if (o.isMesh && o.material) { o.material.envMapIntensity = 0.9; if (o.material.roughness !== undefined) o.material.roughness = 0.42; if (o.material.metalness !== undefined) o.material.metalness = 0.05; } });
+      pivot.add(model);
+      wrap.classList.add('ready');
+    }, undefined, () => { wrap.classList.add('fallback'); });
+
+    const resize = () => { const w = wrap.clientWidth, h = wrap.clientHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); };
+    resize(); window.addEventListener('resize', resize);
+
+    let tx = 0, ty = 0, rx = 0, ry = 0, visible = true, t0 = performance.now();
+    window.addEventListener('pointermove', (e) => {
+      const nx = e.clientX / window.innerWidth - 0.5, ny = e.clientY / window.innerHeight - 0.5;
+      ty = nx * 1.15; tx = ny * 0.55;
     });
-    const ring = new THREE.Mesh(geo, mat);
-    scene.add(ring);
-    const l1 = new THREE.PointLight(0x4DB6FF, 26, 20); l1.position.set(3.5, 2.5, 3); scene.add(l1);
-    const l2 = new THREE.PointLight(0x1E5BFF, 16, 20); l2.position.set(-3.5, -2, 2.5); scene.add(l2);
-    const l3 = new THREE.PointLight(0xffffff, 10, 20); l3.position.set(0, 3.5, -2); scene.add(l3);
-    scene.add(new THREE.AmbientLight(0x0e1424, 0.8));
-
-    const base = { x: 0.95, y: -0.35 };
-    const target = { x: 0, y: 0 }, cur = { x: 0, y: 0 };
-    let t = 0, running = true, needs = true;
-
-    function size() {
-      const r = wrap.getBoundingClientRect();
-      const s = Math.max(1, Math.round(Math.min(r.width, r.height)));
-      renderer.setSize(s, s, false);
-      camera.aspect = 1; camera.updateProjectionMatrix();
-      needs = true;
-    }
-    size(); window.addEventListener('resize', size);
-
-    if (!isTouch) {
-      window.addEventListener('pointermove', e => {
-        const nx = (e.clientX / window.innerWidth) * 2 - 1;
-        const ny = (e.clientY / window.innerHeight) * 2 - 1;
-        target.x = ny * 0.55; target.y = nx * 0.9;
-      }, { passive: true });
-    } else if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission !== 'function') {
-      window.addEventListener('deviceorientation', e => {
-        if (e.beta == null) return;
-        target.x = THREE.MathUtils.clamp((e.beta - 45) / 90, -1, 1) * 0.5;
-        target.y = THREE.MathUtils.clamp(e.gamma / 45, -1, 1) * 0.7;
-      }, { passive: true });
-    }
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver(es => { running = es[0].isIntersecting; if (running) loop(); }, { threshold: 0.05 }).observe(wrap);
-    }
-    document.addEventListener('visibilitychange', () => { running = !document.hidden; if (running) loop(); });
-
-    let raf = 0;
-    function loop() {
-      cancelAnimationFrame(raf);
-      if (!running) return;
-      raf = requestAnimationFrame(loop);
-      if (reduceMotion) { if (!needs) return; needs = false; }
-      t += 0.004;
-      cur.x += (target.x - cur.x) * 0.045;
-      cur.y += (target.y - cur.y) * 0.045;
-      ring.rotation.x = base.x + cur.x + Math.sin(t * 1.3) * 0.08;
-      ring.rotation.y = base.y + cur.y + t * (isTouch ? 1.2 : 0.55);
-      ring.rotation.z = Math.cos(t * 0.9) * 0.08;
-      ring.position.y = Math.sin(t * 1.7) * 0.08;
+    window.addEventListener('pointerleave', () => { tx = 0; ty = 0; });
+    new IntersectionObserver(([en]) => { visible = en.isIntersecting; }, { threshold: 0 }).observe(wrap);
+    const base = 0.12; /* rest pose: slightly toward the text */
+    const loop = (now) => {
+      requestAnimationFrame(loop);
+      if (!visible || document.hidden) return;
+      const t = (now - t0) / 1000;
+      const idleY = Math.sin(t * 0.6) * 0.09, idleX = Math.sin(t * 0.9 + 1) * 0.04, bob = Math.sin(t * 1.1) * 0.035;
+      ry += ((base + ty + idleY) - ry) * 0.06;
+      rx += ((-0.14 + tx + idleX) - rx) * 0.06;
+      pivot.rotation.set(rx, ry, Math.sin(t * 0.5) * 0.015);
+      pivot.position.y = bob;
       renderer.render(scene, camera);
-    }
-    loop();
+    };
+    requestAnimationFrame(loop);
   }
-
   /* ---------- Marquee: duplicate track ---------- */
   $$('.marquee').forEach(m => {
     const track = $('.marquee-track', m); if (!track) return;
