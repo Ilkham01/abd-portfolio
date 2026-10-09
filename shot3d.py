@@ -23,8 +23,8 @@ async def main():
             await pg.wait_for_timeout(1000)
             if 'ready' in await pg.evaluate("document.querySelector('.hero-figure')?.className||''"): print('ready at',round(time.time()-t0,1)); break
         print('errors',errs[:3])
-        await pg.mouse.move(150,750); await pg.wait_for_timeout(3000); await pg.screenshot(path=f'{S}/3d-a.png',clip={'x':900,'y':150,'width':540,'height':600})
-        await pg.mouse.move(1400,100); await pg.wait_for_timeout(3000); await pg.screenshot(path=f'{S}/3d-b.png',clip={'x':900,'y':150,'width':540,'height':600})
+        await pg.mouse.move(0,899); await pg.wait_for_timeout(3000); await pg.screenshot(path=f'{S}/3d-a.png',clip={'x':900,'y':150,'width':540,'height':600})
+        await pg.mouse.move(1439,0); await pg.wait_for_timeout(3000); await pg.screenshot(path=f'{S}/3d-b.png',clip={'x':900,'y':150,'width':540,'height':600})
         await pg.mouse.move(720,450); await pg.wait_for_timeout(3000); await pg.screenshot(path=f'{S}/3d-hero.png')
         await b.close()
 asyncio.run(main())

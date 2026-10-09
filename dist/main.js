@@ -168,7 +168,7 @@
 
   $$('.mrev').forEach(el => el.addEventListener('transitionend', () => { if (el.classList.contains('in')) el.style.willChange = 'auto'; }));
 
-  /* ---------- Hero 3D avatar (GLB, follows the cursor) ---------- */
+  /* ---------- Hero avatar: depth-parallax (image + depth map) or GLB, follows the cursor ---------- */
   const fig = $('.hero-figure');
   if (fig && $('canvas', fig)) {
     const canvas = $('canvas', fig);
@@ -176,51 +176,79 @@
     const reduced = matchMedia('(prefers-reduced-motion:reduce)').matches;
     const lowEnd = (navigator.deviceMemory && navigator.deviceMemory <= 2);
     let gl = null; try { gl = canvas.getContext('webgl2') || canvas.getContext('webgl'); } catch (e) {}
-    if (gl && fine && !reduced && !lowEnd && fig.dataset.model) {
-      Promise.all([import('three'), import('three/addons/loaders/GLTFLoader.js')])
-        .then(([THREE, { GLTFLoader }]) => initAvatar(THREE, GLTFLoader, canvas, fig))
-        .catch(() => {});
+    if (gl && fine && !reduced && !lowEnd && (fig.dataset.depth || fig.dataset.model)) {
+      const mods = [import('three')];
+      if (fig.dataset.model) mods.push(import('three/addons/loaders/GLTFLoader.js'));
+      Promise.all(mods).then(([THREE, G]) => initAvatar(THREE, G && G.GLTFLoader, canvas, fig)).catch(() => {});
     }
   }
 
   function initAvatar(THREE, GLTFLoader, canvas, wrap) {
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance', premultipliedAlpha: false });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 0.95;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(26, 1, 0.1, 50);
-    camera.position.set(0, 0.05, 6.4);
-
-    /* studio environment: white key band + blue band, drawn to a canvas */
-    const env = document.createElement('canvas'); env.width = 1024; env.height = 512;
-    const c = env.getContext('2d');
-    c.fillStyle = '#0b1020'; c.fillRect(0, 0, 1024, 512);
-    const band = (x, y, w, h, color, blur) => { c.save(); c.filter = `blur(${blur}px)`; c.fillStyle = color; c.fillRect(x, y, w, h); c.restore(); };
-    band(560, 70, 300, 60, 'rgba(255,255,255,.95)', 30);
-    band(0, 200, 300, 120, 'rgba(47,123,255,.9)', 40);
-    band(700, 330, 324, 40, 'rgba(120,170,255,.5)', 30);
-    const envTex = new THREE.CanvasTexture(env); envTex.mapping = THREE.EquirectangularReflectionMapping; envTex.colorSpace = THREE.SRGBColorSpace;
-    const pmrem = new THREE.PMREMGenerator(renderer); scene.environment = pmrem.fromEquirectangular(envTex).texture; pmrem.dispose();
-
-    scene.add(new THREE.AmbientLight(0x6f87b8, 0.18));
-    const key = new THREE.DirectionalLight(0xffffff, 2.0); key.position.set(2.2, 3, 2.6); scene.add(key);
-    const rim = new THREE.DirectionalLight(0x2f7bff, 4.2); rim.position.set(-3.5, 1.4, -1.2); scene.add(rim);
-    const fill = new THREE.DirectionalLight(0xffd9b0, 0.35); fill.position.set(0.5, -2.5, 2.5); scene.add(fill);
-
+    const camera = new THREE.PerspectiveCamera(24, 1, 0.1, 50);
+    camera.position.set(0, 0, 6.6);
     const pivot = new THREE.Group(); scene.add(pivot);
-    const loader = new GLTFLoader();
-    loader.load(wrap.dataset.model, (gltf) => {
-      const model = gltf.scene;
-      const box = new THREE.Box3().setFromObject(model);
-      const size = box.getSize(new THREE.Vector3()); const center = box.getCenter(new THREE.Vector3());
-      const s = 2.6 / Math.max(size.x, size.y, size.z);
-      model.position.sub(center).multiplyScalar(s); model.scale.setScalar(s);
-      model.traverse(o => { if (o.isMesh && o.material) { o.material.envMapIntensity = 0.9; if (o.material.roughness !== undefined) o.material.roughness = 0.42; if (o.material.metalness !== undefined) o.material.metalness = 0.05; } });
-      pivot.add(model);
-      wrap.classList.add('ready');
-    }, undefined, () => { wrap.classList.add('fallback'); });
+    let amp = { y: 1.15, x: 0.55, baseY: 0.12, baseX: -0.14 };
+
+    if (wrap.dataset.depth) {
+      /* ---- image + depth map → displaced relief plane (keeps the picture pixel-perfect) ---- */
+      amp = { y: 0.42, x: 0.24, baseY: 0, baseX: 0 };
+      const tl = new THREE.TextureLoader();
+      Promise.all([
+        new Promise((res, rej) => tl.load(wrap.dataset.color, res, undefined, rej)),
+        new Promise((res, rej) => tl.load(wrap.dataset.depth, res, undefined, rej))
+      ]).then(([col, dep]) => {
+        col.colorSpace = THREE.SRGBColorSpace; col.anisotropy = 4; col.minFilter = THREE.LinearMipmapLinearFilter;
+        const ar = col.image.width / col.image.height;
+        const H = 2.7, W = H * ar;
+        const geo = new THREE.PlaneGeometry(W, H, 240, Math.round(240 / ar));
+        const mat = new THREE.ShaderMaterial({
+          transparent: true, depthWrite: true,
+          uniforms: { map: { value: col }, depthMap: { value: dep }, relief: { value: 0.95 }, light: { value: new THREE.Vector2(0, 0) } },
+          vertexShader: `uniform sampler2D depthMap; uniform float relief; varying vec2 vUv; varying float vD;
+            void main(){ vUv = uv; float d = texture2D(depthMap, uv).r; vD = d;
+              vec3 p = position; p.z += (d - 0.5) * relief;
+              gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0); }`,
+          fragmentShader: `uniform sampler2D map; uniform vec2 light; varying vec2 vUv; varying float vD;
+            void main(){ vec4 c = texture2D(map, vUv); if (c.a < 0.35) discard;
+              /* subtle moving sheen: brightens the side of the relief facing the cursor */
+              float sheen = clamp(dot(normalize(vec3(light, 0.6)), vec3(dFdx(vD) * 60.0, dFdy(vD) * 60.0, 1.0)), 0.0, 1.0);
+              c.rgb *= 0.96 + sheen * 0.14;
+              gl_FragColor = vec4(c.rgb, c.a);
+              #include <colorspace_fragment>
+            }`
+        });
+        mat.extensions = { derivatives: true };
+        const mesh = new THREE.Mesh(geo, mat); pivot.add(mesh);
+        wrap._light = mat.uniforms.light.value;
+        wrap.classList.add('ready');
+      }).catch(() => {});
+    } else if (GLTFLoader) {
+      /* ---- real 3D model ---- */
+      renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 0.95;
+      const env = document.createElement('canvas'); env.width = 1024; env.height = 512;
+      const c = env.getContext('2d'); c.fillStyle = '#0b1020'; c.fillRect(0, 0, 1024, 512);
+      const band = (x, y, w, h, color, blur) => { c.save(); c.filter = `blur(${blur}px)`; c.fillStyle = color; c.fillRect(x, y, w, h); c.restore(); };
+      band(560, 70, 300, 60, 'rgba(255,255,255,.95)', 30); band(0, 200, 300, 120, 'rgba(47,123,255,.9)', 40); band(700, 330, 324, 40, 'rgba(120,170,255,.5)', 30);
+      const envTex = new THREE.CanvasTexture(env); envTex.mapping = THREE.EquirectangularReflectionMapping; envTex.colorSpace = THREE.SRGBColorSpace;
+      const pmrem = new THREE.PMREMGenerator(renderer); scene.environment = pmrem.fromEquirectangular(envTex).texture; pmrem.dispose();
+      scene.add(new THREE.AmbientLight(0x6f87b8, 0.18));
+      const key = new THREE.DirectionalLight(0xffffff, 2.0); key.position.set(2.2, 3, 2.6); scene.add(key);
+      const rim = new THREE.DirectionalLight(0x2f7bff, 4.2); rim.position.set(-3.5, 1.4, -1.2); scene.add(rim);
+      const fill = new THREE.DirectionalLight(0xffd9b0, 0.35); fill.position.set(0.5, -2.5, 2.5); scene.add(fill);
+      new GLTFLoader().load(wrap.dataset.model, (gltf) => {
+        const model = gltf.scene;
+        const box = new THREE.Box3().setFromObject(model);
+        const size = box.getSize(new THREE.Vector3()); const center = box.getCenter(new THREE.Vector3());
+        const s = 2.6 / Math.max(size.x, size.y, size.z);
+        model.position.sub(center).multiplyScalar(s); model.scale.setScalar(s);
+        model.traverse(o => { if (o.isMesh && o.material) { o.material.envMapIntensity = 0.9; if (o.material.roughness !== undefined) o.material.roughness = 0.42; if (o.material.metalness !== undefined) o.material.metalness = 0.05; } });
+        pivot.add(model); wrap.classList.add('ready');
+      }, undefined, () => {});
+    }
 
     const resize = () => { const w = wrap.clientWidth, h = wrap.clientHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); };
     resize(); window.addEventListener('resize', resize);
@@ -228,24 +256,26 @@
     let tx = 0, ty = 0, rx = 0, ry = 0, visible = true, t0 = performance.now();
     window.addEventListener('pointermove', (e) => {
       const nx = e.clientX / window.innerWidth - 0.5, ny = e.clientY / window.innerHeight - 0.5;
-      ty = nx * 1.15; tx = ny * 0.55;
+      ty = nx * amp.y; tx = ny * amp.x;
+      if (wrap._light) wrap._light.set(nx * 2, -ny * 2);
     });
-    window.addEventListener('pointerleave', () => { tx = 0; ty = 0; });
+    document.addEventListener('pointerleave', () => { tx = 0; ty = 0; });
     new IntersectionObserver(([en]) => { visible = en.isIntersecting; }, { threshold: 0 }).observe(wrap);
-    const base = 0.12; /* rest pose: slightly toward the text */
+    const k = wrap.dataset.depth ? 0.075 : 0.06;
     const loop = (now) => {
       requestAnimationFrame(loop);
       if (!visible || document.hidden) return;
       const t = (now - t0) / 1000;
-      const idleY = Math.sin(t * 0.6) * 0.09, idleX = Math.sin(t * 0.9 + 1) * 0.04, bob = Math.sin(t * 1.1) * 0.035;
-      ry += ((base + ty + idleY) - ry) * 0.06;
-      rx += ((-0.14 + tx + idleX) - rx) * 0.06;
-      pivot.rotation.set(rx, ry, Math.sin(t * 0.5) * 0.015);
+      const idleY = Math.sin(t * 0.6) * (wrap.dataset.depth ? 0.035 : 0.09), idleX = Math.sin(t * 0.9 + 1) * (wrap.dataset.depth ? 0.02 : 0.04), bob = Math.sin(t * 1.1) * 0.03;
+      ry += ((amp.baseY + ty + idleY) - ry) * k;
+      rx += ((amp.baseX + tx + idleX) - rx) * k;
+      pivot.rotation.set(rx, ry, Math.sin(t * 0.5) * 0.012);
       pivot.position.y = bob;
       renderer.render(scene, camera);
     };
     requestAnimationFrame(loop);
   }
+
   /* ---------- Marquee: duplicate track ---------- */
   $$('.marquee').forEach(m => {
     const track = $('.marquee-track', m); if (!track) return;

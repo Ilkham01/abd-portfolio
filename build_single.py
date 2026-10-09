@@ -28,7 +28,7 @@ def inline_assets(html):
         p = m.group(2)
         if p not in cache: cache[p] = datauri(f'{DIST}/{p}')
         return m.group(1) + cache[p] + m.group(3)
-    return re.sub(r'((?:src|href|data-model)=")(assets/[^"]+|resume\.pdf)(")', rep, html)
+    return re.sub(r'((?:src|href|data-model|data-color|data-depth)=")(assets/[^"]+|resume\.pdf)(")', rep, html)
 
 def relink(html, is_home):
     # case links -> hash routes
