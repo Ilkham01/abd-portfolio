@@ -1,0 +1,135 @@
+{{meta title="FOR YOU Cargo — приложение для заказов из Китая · кейс Ильхама Абдримова" description="UX/UI-кейс мобильного приложения карго-компании: адрес склада, личный код, трекинг посылок, выдача по штрихкоду. Логотип, структура, дизайн — 2 недели." bodyclass="case-page"}}
+
+<section class="dark case-hero grid-bg glow">
+  <div class="container">
+    <div class="crumbs rv"><a href="index.html">Главная</a><span>/</span><a href="index.html#cases">Кейсы</a><span>/</span><span>FOR YOU Cargo</span></div>
+    <div class="tags rv" style="margin-bottom:22px"><span class="tag tag-accent">Мобильное приложение</span><span class="tag">Логотип</span><span class="tag">Структура</span><span class="tag tag-amber">В разработке</span></div>
+    <h1 class="h1 wr">FOR YOU Cargo — приложение для заказов из Китая</h1>
+    <p class="lead rv rv-d2">Карго-компания из Алматы доставляет посылки с китайских маркетплейсов. Клиенту нужно получить адрес склада, вставить его при заказе, отследить посылку и забрать её по коду. Всё это — в одном простом приложении.</p>
+    <div class="case-meta rv rv-d3">
+      <div><b>Срок</b><span>2 недели с брифингом и правками</span></div>
+      <div><b>Роль</b><span>Логотип, структура, дизайн экранов</span></div>
+      <div><b>Объём</b><span>20+ экранов, онбординг, 3D-иллюстрации</span></div>
+      <div><b>Статус</b><span>Передано в разработку</span></div>
+    </div>
+    <div class="case-cover cover-phones mrev rv-d3">
+      <div class="phone"><div class="screen"><img src="assets/cargo-m-onboarding.webp" alt="Онбординг" width="480" height="1044"></div></div>
+      <div class="phone"><div class="screen"><img src="assets/cargo-m-home.webp" alt="Главный экран" width="480" height="1500"></div></div>
+      <div class="phone"><div class="screen"><img src="assets/cargo-m-parcels.webp" alt="Посылки" width="480" height="1044"></div></div>
+      <div class="phone"><div class="screen"><img src="assets/cargo-m-barcode.webp" alt="Штрихкод" width="480" height="1377"></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="sheet">
+<section class="cs">
+  <div class="container">
+    <div class="cs-head">
+      <div class="lbl rv">01 — Задача</div>
+      <div>
+        <h2 class="h3 rv">Сохранить привычную логику, но сделать понятнее</h2>
+        <p class="lead rv rv-d1">Заказчик попросил взять за основу логику приложения-лидера рынка: его клиенты уже привыкли к такому сценарию. Моя задача — не копировать, а переосмыслить: современнее, чище и понятнее новичкам, которые заказывают из Китая впервые.</p>
+      </div>
+    </div>
+    <div class="cs-grid">
+      <div class="prose rv">
+        <p><b>Аудитория:</b> люди 20–45 лет, которые покупают на китайских площадках для себя или на перепродажу. Главный страх новичка — «вставил не тот адрес, посылка потерялась».</p>
+        <p><b>Ограничения:</b> небольшая команда разработки и жёсткие сроки, поэтому MVP должен быть компактным — только то, без чего клиент не получит посылку.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cs">
+  <div class="container">
+    <div class="cs-head">
+      <div class="lbl rv">02 — Процесс</div>
+      <div><h2 class="h3 rv">Схема структуры и MVP-скоуп</h2><p class="lead rv rv-d1">Сначала собрал карту всех экранов и переходов, потом вместе с заказчиком отметили красным, что отрезаем из первой версии: кошелёк, лайфхаки, сообщения и лишние статусы посылок.</p></div>
+    </div>
+    <figure class="shot figure rv" data-zoom data-cap="Схема структуры приложения"><div class="im"><img src="assets/cargo-structure.webp" alt="Схема структуры приложения" loading="lazy" width="2400" height="788"></div><figcaption>Красные блоки — отложено до следующих версий. Нажмите, чтобы увеличить.</figcaption></figure>
+  </div>
+</section>
+
+<section class="cs">
+  <div class="container">
+    <div class="cs-head">
+      <div class="lbl rv">03 — Решения</div>
+      <div><h2 class="h3 rv">Шесть решений для главного сценария</h2></div>
+    </div>
+    <ol class="sol rv">
+      <li><span class="k">1</span><div><b>Адрес склада — по полям, с копированием</b><span>Получатель, телефон, регион, адрес — каждое поле копируется отдельно, плюс кнопка «Скопировать всё». Так адрес не ломается при вставке в китайскую форму.</span></div></li>
+      <li><span class="k">2</span><div><b>Личный код — крупно и сразу</b><span>Код клиента на главном экране, его видно без прокрутки. На выдаче — штрихкод, который сканирует сотрудник склада.</span></div></li>
+      <li><span class="k">3</span><div><b>Поиск трек-кода с мгновенной обратной связью</b><span>Поле на главном экране, результат — статус и где сейчас посылка. Не нужно искать раздел.</span></div></li>
+      <li><span class="k">4</span><div><b>Посылки по статусам со счётчиками</b><span>«Ожидает», «В пути», «На складе», «Выдано» — вкладки с числами, в каждой посылке можно оставить заметку «что это».</span></div></li>
+      <li><span class="k">5</span><div><b>Сканер в центре меню</b><span>Самое частое действие на складе — отсканировать. Поэтому он не в разделе, а в центре нижней панели.</span></div></li>
+      <li><span class="k">6</span><div><b>Онбординг из трёх экранов</b><span>Как получить адрес, как вставить его на маркетплейсе, как забрать. Только то, что снимает страх новичка.</span></div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="cs">
+  <div class="container">
+    <div class="cs-head">
+      <div class="lbl rv">04 — Экраны</div>
+      <div><h2 class="h3 rv">Главный сценарий от регистрации до выдачи</h2></div>
+    </div>
+    <div class="shots phones rv">
+      <div class="phone light"><div class="screen"><img src="assets/cargo-m-register.webp" alt="Регистрация" loading="lazy" width="480" height="1044"></div></div>
+      <div class="phone light"><div class="screen"><img src="assets/cargo-m-home.webp" alt="Главный экран" loading="lazy" width="480" height="1500"></div></div>
+      <div class="phone light"><div class="screen"><img src="assets/cargo-m-parcel-info.webp" alt="Информация о посылке" loading="lazy" width="480" height="1330"></div></div>
+      <div class="phone light"><div class="screen"><img src="assets/cargo-m-education.webp" alt="Обучение" loading="lazy" width="480" height="1236"></div></div>
+    </div>
+    <div class="shots phones rv" style="margin-top:20px">
+      <div class="phone light"><div class="screen"><img src="assets/cargo-m-onboarding.webp" alt="Онбординг" loading="lazy" width="480" height="1044"></div></div>
+      <div class="phone light"><div class="screen"><img src="assets/cargo-m-parcels.webp" alt="Посылки" loading="lazy" width="480" height="1044"></div></div>
+      <div class="phone light"><div class="screen"><img src="assets/cargo-m-barcode.webp" alt="Штрихкод" loading="lazy" width="480" height="1377"></div></div>
+      <div class="phone light"><div class="screen"><img src="assets/cargo-m-profile.webp" alt="Профиль" loading="lazy" width="480" height="2113"></div></div>
+    </div>
+    <p class="fcap rv">Наведите на экран, чтобы пролистать</p>
+  </div>
+</section>
+
+<section class="cs">
+  <div class="container">
+    <div class="cs-head">
+      <div class="lbl rv">05 — Айдентика</div>
+      <div><h2 class="h3 rv">Две стрелки «туда-обратно» и фирменный лайм</h2></div>
+    </div>
+    <div class="cs-grid">
+      <div class="prose rv">
+        <p>Логотип — две встречные стрелки: посылка едет из Китая, клиент получает её здесь. Знак читается в иконке приложения и на бирке.</p>
+        <p>Цвет — лаймовый на тёмно-графитовом: заметно на полке магазина приложений и не похоже на синие логистические бренды. Для онбординга и пустых состояний сделал 3D-иллюстрации коробок и сканера.</p>
+      </div>
+    </div>
+    <ul class="palette rv" style="margin-top:28px">
+      <li style="background:#151713">Графит<span>#151713</span></li>
+      <li style="background:#c8ff2e;color:#151713">Лайм<span>#C8FF2E</span></li>
+      <li style="background:#f4f1e9;color:#151713;border:1px solid var(--line)">Фон<span>#F4F1E9</span></li>
+      <li style="background:#ffffff;color:#151713;border:1px solid var(--line)">Карточки<span>#FFFFFF</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="cs">
+  <div class="container">
+    <div class="cs-head">
+      <div class="lbl rv">06 — Что проверил бы дальше</div>
+      <div><h2 class="h3 rv">Гипотезы после запуска</h2></div>
+    </div>
+    <ul class="hyp rv">
+      <li><b>Пуш о прибытии на склад</b>Сколько клиентов приходят за посылкой в тот же день, если уведомление содержит адрес и часы работы.</li>
+      <li><b>Автовставка адреса</b>Кнопка «Скопировать всё» против пошагового копирования: где меньше ошибок в адресе.</li>
+      <li><b>Калькулятор стоимости</b>Нужен ли клиенту расчёт доставки по весу до оформления заказа — или достаточно справочника тарифов.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="cs">
+  <div class="container">
+    <a class="card next-case card-hover rv" href="autobir.html">
+      <div><div class="lbl">Следующий кейс</div><div class="h3">AutoBir — запись на автомойки и админ-панель</div></div>
+      <span class="btn btn-dark">Открыть <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+  </div>
+</section>
+</div>

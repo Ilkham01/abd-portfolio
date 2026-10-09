@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{title}}</title>
+<meta name="description" content="{{description}}">
+<meta name="theme-color" content="#0A0E17">
+<meta property="og:title" content="{{title}}">
+<meta property="og:description" content="{{description}}">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script>document.documentElement.classList.add('js')</script>
+<script defer src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+</head>
+<body class="{{bodyclass}}">
+{{sprite}}
+<header class="header">
+  <div class="header-in">
+    <a class="logo" href="index.html" aria-label="abd design — на главную"><svg aria-hidden="true"><use href="#logo"/></svg></a>
+    <nav class="nav" aria-label="Разделы">
+      <a href="index.html#cases">Кейсы</a>
+      <a href="index.html#services">Услуги</a>
+      <a href="index.html#process">Процесс</a>
+      <a href="index.html#about">Обо мне</a>
+      <a href="index.html#faq">FAQ</a>
+    </nav>
+    <div class="header-cta">
+      <a class="btn btn-white btn-arrow" href="index.html#contact">Первый экран — бесплатно <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <button class="burger" aria-label="Меню" aria-expanded="false"><span></span></button>
+    </div>
+  </div>
+</header>
+<div class="mmenu" aria-label="Мобильное меню">
+  <a href="index.html#cases">Кейсы</a>
+  <a href="index.html#services">Услуги</a>
+  <a href="index.html#process">Процесс</a>
+  <a href="index.html#about">Обо мне</a>
+  <a href="index.html#faq">FAQ</a>
+  <a class="btn btn-primary btn-lg" href="index.html#contact">Первый экран — бесплатно</a>
+</div>

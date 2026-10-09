@@ -1,0 +1,14 @@
+# исходные экспорты из Figma (300+ МБ) — хранятся локально, в репозиторий не идут
+src/
+
+# собираемые артефакты
+abd-portfolio.html
+abd-portfolio.zip
+files.json
+shots/
+*.png
+
+# системное
+.DS_Store
+__pycache__/
+.netlify/

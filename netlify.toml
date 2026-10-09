@@ -1,0 +1,15 @@
+[build]
+  # Сайт уже собран — Netlify просто публикует папку dist
+  publish = "dist"
+  command = ""
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
