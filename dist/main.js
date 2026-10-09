@@ -122,7 +122,7 @@
 
   /* ---------- Reveal on scroll ---------- */
   // Containers reveal item by item with a small stagger instead of as one block
-  const STAGGER = ['.shots', '.sol', '.hyp', '.grid-3', '.services', '.steps', '.exp', '.palette', '.brand-chips', '.case-cover.cover-phones', '.trust', '.hero-stats', '.faq', '.sites-small'];
+  const STAGGER = ['.shots', '.sol', '.hyp', '.grid-3', '.services', '.steps', '.exp', '.palette', '.brand-chips', '.case-cover.cover-phones', '.hero-stats', '.faq', '.sites-small'];
   $$(STAGGER.join(',')).forEach(box => {
     const kids = Array.from(box.children).filter(k => k.nodeType === 1);
     if (!kids.length) return;
