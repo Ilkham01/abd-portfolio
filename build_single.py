@@ -19,6 +19,7 @@ pages = [('index.html', 'home'), ('demping-pro.html', 'demping-pro'), ('foryou-c
 def datauri(path):
     mime = mimetypes.guess_type(path)[0] or 'application/octet-stream'
     if path.endswith('.webp'): mime = 'image/webp'
+    if path.endswith('.glb'): mime = 'model/gltf-binary'
     return f'data:{mime};base64,' + base64.b64encode(open(path, 'rb').read()).decode()
 
 cache = {}
@@ -27,7 +28,7 @@ def inline_assets(html):
         p = m.group(2)
         if p not in cache: cache[p] = datauri(f'{DIST}/{p}')
         return m.group(1) + cache[p] + m.group(3)
-    return re.sub(r'((?:src|href)=")(assets/[^"]+|resume\.pdf)(")', rep, html)
+    return re.sub(r'((?:src|href|data-model)=")(assets/[^"]+|resume\.pdf)(")', rep, html)
 
 def relink(html, is_home):
     # case links -> hash routes
@@ -101,6 +102,7 @@ html = f"""<!doctype html>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script>document.documentElement.classList.add('js')</script>
+<script type="importmap">{{"imports":{{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}}}</script>
 <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
 <style>
 {css}
