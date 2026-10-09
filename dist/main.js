@@ -58,14 +58,33 @@
     uf(); window.addEventListener('scroll', uf, { passive: true });
   }
 
+  /* ---------- Typography: no hanging prepositions, no lonely short last word ---------- */
+  (function () {
+    const SHORT = /(^|[\s(«„"])([а-яёa-z]{1,2}|без|для|над|под|при|про|или|что|как|где|нет|так|уже|ещё|еще|это|все|всё|вас|нас|них|них|мне|вам|нам|его|её|ее|их|бы|же|ли|не|ни)\s+/giu;
+    const NB = '\u00A0';
+    const fix = (node) => {
+      node.childNodes.forEach(n => {
+        if (n.nodeType === 3) {
+          let t = n.nodeValue;
+          /* prepositions / conjunctions / particles stick to the next word */
+          t = t.replace(/(^|[\s(«„"])(а|в|во|и|к|ко|с|со|у|о|об|от|до|за|из|на|не|ни|но|по|бы|же|ли|без|для|над|под|при|про|или|что|как|где|так|уже|ещё|еще)\s+/giu, (m, a, w) => a + w + NB);
+          /* last word of a heading joins the previous one if it is short */
+          t = t.replace(/\s+([^\s]{1,4})([»".!?]*)\s*$/u, (m, w, p) => NB + w + p);
+          n.nodeValue = t;
+        } else if (n.nodeType === 1 && n.tagName !== 'BR') fix(n);
+      });
+    };
+    $$('h1, h2, h3, .q, .lead, .fcard p, .faq summary').forEach(fix);
+  })();
+
   /* ---------- Word-rise headline ---------- */
   const splitWords = (el) => {
     let i = 0;
     const wrap = (txt) => {
       const frag = document.createDocumentFragment();
-      txt.split(/(\s+)/).forEach(part => {
+      txt.split(/([ \t\n]+)/).forEach(part => {
         if (!part) return;
-        if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(' ')); return; }
+        if (/^[ \t\n]+$/.test(part)) { frag.appendChild(document.createTextNode(' ')); return; }
         const w = document.createElement('span'); w.className = 'w';
         const inner = document.createElement('i'); inner.textContent = part; inner.style.setProperty('--d', (i++ * 0.07) + 's');
         w.appendChild(inner); frag.appendChild(w);
