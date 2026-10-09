@@ -274,7 +274,7 @@
   /* ---------- Marquee: duplicate track ---------- */
   $$('.marquee').forEach(m => {
     const track = $('.marquee-track', m); if (!track) return;
-    const clone = track.cloneNode(true); clone.setAttribute('aria-hidden', 'true'); m.appendChild(clone);
+    const clone = track.cloneNode(true); clone.setAttribute('aria-hidden', 'true'); $$('a', clone).forEach(a => { a.tabIndex = -1; }); m.appendChild(clone);
   });
 
   /* ---------- Hover-scroll frames ---------- */
