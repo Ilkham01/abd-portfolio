@@ -26,5 +26,7 @@ async def main():
         await pg.mouse.move(0,899); await pg.wait_for_timeout(3000); await pg.screenshot(path=f'{S}/3d-a.png',clip={'x':900,'y':150,'width':540,'height':600})
         await pg.mouse.move(1439,0); await pg.wait_for_timeout(3000); await pg.screenshot(path=f'{S}/3d-b.png',clip={'x':900,'y':150,'width':540,'height':600})
         await pg.mouse.move(720,450); await pg.wait_for_timeout(3000); await pg.screenshot(path=f'{S}/3d-hero.png')
+        await pg.wait_for_timeout(4500); await pg.screenshot(path=f'{S}/3d-hero2.png',clip={'x':0,'y':0,'width':1440,'height':120})
+        await pg.screenshot(path=f'{S}/hdr1.png',clip={'x':0,'y':0,'width':1440,'height':120})
         await b.close()
 asyncio.run(main())
