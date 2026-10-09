@@ -172,14 +172,14 @@ p{text-wrap:pretty}
 .glow::after{content:'';position:absolute;z-index:-1;pointer-events:none;inset:auto auto 0 0;width:70vw;height:50vh;background:radial-gradient(closest-side,rgba(30,91,255,.26),transparent 70%);filter:blur(40px);transform:translate(-20%,30%)}
 .hero-grid{display:block;position:relative}
 .hero-main{position:relative;z-index:1;max-width:calc(100% - clamp(300px,28vw,420px))}
-.hero-figure{position:absolute;right:-3%;top:50%;transform:translateY(-52%);width:clamp(380px,36vw,560px);aspect-ratio:1/1;z-index:0}
+.hero-figure{position:absolute;right:-2%;top:50%;transform:translateY(-52%);width:clamp(360px,34vw,500px);aspect-ratio:1/1;z-index:0}
 .hero-figure img{position:absolute;left:50%;top:50%;width:72%;height:auto;transform:translate(-50%,-50%);transition:opacity .8s var(--ease)}
 .hero-figure canvas{position:absolute;inset:0;width:100%!important;height:100%!important;opacity:0;transition:opacity 1s var(--ease)}
 .hero-figure.ready canvas{opacity:1}
 .hero-figure.ready img{opacity:0}
 .hero-eyebrow{display:block;font-size:15px;font-weight:500;color:rgba(255,255,255,.6);margin-bottom:28px}
 .hero-eyebrow i{display:none}
-.hero .h1{color:#fff;font-size:clamp(40px,7.2vw,104px);letter-spacing:-.065em;line-height:.96}
+.hero .h1{color:#fff;font-size:clamp(40px,6.5vw,94px);letter-spacing:-.065em;line-height:.96}
 .hero-main .h1{max-width:none;width:max-content}
 .hero .h1 .l1{display:block;white-space:nowrap}
 .hero .h1 .l2{color:rgba(255,255,255,.42);display:block}
