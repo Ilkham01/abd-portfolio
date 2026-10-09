@@ -295,23 +295,6 @@
   const markScrolled = () => { if (window.scrollY > 80) document.documentElement.classList.add('scrolled'); else document.documentElement.classList.remove('scrolled'); };
   window.addEventListener('scroll', markScrolled, { passive: true }); markScrolled();
 
-  /* ---------- Stacking cards: the card underneath shrinks and dims as the next one covers it ---------- */
-  const stack = $('.stack');
-  if (stack && !matchMedia('(prefers-reduced-motion:reduce)').matches) {
-    const cards = $$('.scard', stack);
-    const update = () => {
-      cards.forEach((c, i) => {
-        const next = cards[i + 1]; if (!next) { c.style.transform = ''; c.style.filter = ''; return; }
-        const r = c.getBoundingClientRect(), n = next.getBoundingClientRect();
-        /* 0 → next card is still a full card-height below; 1 → next card has fully covered this one */
-        const p = Math.min(1, Math.max(0, 1 - (n.top - r.top - 18) / Math.max(1, r.height)));
-        c.style.transform = `scale(${1 - p * 0.06})`;
-        c.style.filter = `brightness(${1 - p * 0.35})`;
-      });
-    };
-    window.addEventListener('scroll', update, { passive: true }); window.addEventListener('resize', update); update();
-  }
-
   /* ---------- Marquee: duplicate track ---------- */
   $$('.marquee').forEach(m => {
     const track = $('.marquee-track', m); if (!track) return;
