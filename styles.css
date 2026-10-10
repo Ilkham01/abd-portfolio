@@ -506,7 +506,8 @@ a.wordmark:hover{color:var(--text)}
 /* ---------- About ---------- */
 .about{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:48px;align-items:start}
 .portrait{position:sticky;top:96px;border-radius:28px;overflow:hidden;background:#111827;border:1px solid var(--dark-border);aspect-ratio:4/5;display:flex;align-items:flex-end;justify-content:center;isolation:isolate}
-.portrait img{width:84%;height:auto;max-height:94%;object-fit:contain;object-position:bottom;filter:drop-shadow(0 20px 40px rgba(0,0,0,.5))}
+.portrait{background:#3f8ff2;aspect-ratio:1717/2576}
+.portrait img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%}
 .portrait .nm{position:absolute;left:0;right:0;bottom:0;padding:48px 22px 20px;display:flex;flex-direction:column;gap:2px;background:linear-gradient(transparent,rgba(10,14,23,.85));z-index:1}
 .portrait .nm b{font-weight:600;font-size:16px}.portrait .nm span{font-size:13px;color:rgba(255,255,255,.55)}
 .about-text{display:flex;flex-direction:column;gap:28px}
@@ -520,7 +521,7 @@ a.wordmark:hover{color:var(--text)}
 .tools{display:flex;flex-wrap:wrap;gap:8px}
 .tools .tag{min-height:34px;padding:6px 14px;font-size:14px}
 .about-actions{display:flex;gap:12px;flex-wrap:wrap}
-@media (max-width:900px){.about{grid-template-columns:1fr;gap:28px}.portrait{max-width:420px;aspect-ratio:4/4.6}.exp li{grid-template-columns:96px 1fr}}
+@media (max-width:900px){.about{grid-template-columns:1fr;gap:28px}.portrait{max-width:420px;aspect-ratio:1717/2576}.exp li{grid-template-columns:96px 1fr}}
 @media (max-width:640px){.about-actions .btn{flex:1 1 100%}}
 
 /* ---------- Review ---------- */
