@@ -367,31 +367,125 @@
     });
   });
 
-  /* ---------- Gallery: balanced columns + filters ---------- */
-  const masonry = $('.masonry');
-  if (masonry) {
-    const items = $$('.g', masonry);
-    let current = 'all';
-    const layout = () => {
-      const n = window.innerWidth <= 900 ? 2 : 3;
-      const cols = Array.from({ length: n }, () => { const c = document.createElement('div'); c.className = 'col'; return c; });
-      const hts = cols.map(() => 0);
-      items.forEach(g => {
-        if (current !== 'all' && g.dataset.cat !== current) return;
-        const img = $('img', g);
-        const ratio = (+img.getAttribute('height') || 1) / (+img.getAttribute('width') || 1);
-        const i = hts.indexOf(Math.min(...hts));
-        cols[i].appendChild(g); hts[i] += ratio;
+  /* ---------- Stacking cards (generic): the card underneath shrinks and dims as the next one covers it ---------- */
+  $$('.stack').forEach(stack => {
+    const items = Array.from(stack.children);
+    items.forEach((c, i) => c.style.setProperty('--i', i));
+    if (matchMedia('(prefers-reduced-motion:reduce)').matches || !matchMedia('(min-width:1024px)').matches) return;
+    const update = () => {
+      items.forEach((c, i) => {
+        const next = items[i + 1]; if (!next) { c.style.transform = ''; c.style.filter = ''; return; }
+        const r = c.getBoundingClientRect(), n = next.getBoundingClientRect();
+        const p = Math.min(1, Math.max(0, 1 - (n.top - r.top - 14) / Math.max(1, Math.min(r.height, window.innerHeight * 0.9))));
+        c.style.transform = `scale(${1 - p * 0.05})`;
+        c.style.filter = `brightness(${1 - p * 0.3})`;
       });
-      masonry.innerHTML = ''; cols.forEach(c => masonry.appendChild(c));
     };
-    layout();
-    let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(layout, 120); });
-    $$('.filter').forEach(b => b.addEventListener('click', () => {
-      $$('.filter').forEach(x => x.classList.toggle('active', x === b));
-      current = b.dataset.filter; layout();
-      if (!reduceMotion) masonry.animate([{ opacity: .3, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 600, easing: 'cubic-bezier(.22,1,.36,1)' });
-    }));
+    window.addEventListener('scroll', update, { passive: true }); window.addEventListener('resize', update); update();
+  });
+
+  /* ---------- Skills showcase: pinned section, 4 scenes driven by scroll progress ---------- */
+  const skills = $('.skills');
+  if (skills && matchMedia('(min-width:1024px)').matches && !matchMedia('(prefers-reduced-motion:reduce)').matches) {
+    const scenes = $$('.scene', skills), word = $('.skw-in', skills), cap = $('.skills-cap', skills), cnt = $('.skills-count b', skills), bars = $$('.skills-progress i', skills);
+    const WORDS = ['первые экраны', 'презентации', 'брендинг и мерч', 'креативы для соцсетей'];
+    const CAPS = ['Концепты первых экранов для сайтов и приложений', 'Слайды для курсов, форумов и бизнес-презентаций', 'Логотипы, упаковка, меню и мерч', 'Сторис, посты и обложки для Instagram и YouTube'];
+    const stage = $('.skills-stage', skills);
+    const N = scenes.length;
+    const ease = t => 1 - Math.pow(1 - t, 3);
+    const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+    const smooth = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+    /* ---- scene 1: grid rising in rows ---- */
+    const g = $$('figure', scenes[0]);
+    const layoutGrid = () => {
+      const W = stage.clientWidth, H = stage.clientHeight; const pad = Math.max(24, (W - 1320) / 2 + 24);
+      const inner = W - pad * 2; const gridW = inner * 0.72; const cw = (gridW - 36) / 3, ch = cw * 10 / 16; const top0 = H * 0.36;
+      const ph = ch * 2 + 18, pw = ph * 9 / 19.5; const px0 = pad + gridW + (inner - gridW - pw * 2 - 18) / 2 + 9;
+      let k = 0;
+      g.forEach((f, i) => {
+        if (i < 6) { const col = i % 3, row = Math.floor(i / 3); f.style.left = (pad + col * (cw + 18)) + 'px'; f.style.top = (top0 + row * (ch + 18)) + 'px'; f.style.width = cw + 'px'; f.style.height = ch + 'px'; f.dataset.row = row; f.dataset.col = col; }
+        else { f.style.width = pw + 'px'; f.style.height = ph + 'px'; f.style.left = (px0 + k * (pw + 18)) + 'px'; f.style.top = (top0 - 10 + k * 20) + 'px'; f.dataset.row = 0.5 + k * 0.4; f.dataset.col = 3 + k; k++; }
+      });
+    };
+    const drawGrid = (p) => { /* p 0..1 within scene: cards rise in, then the whole grid drifts up and out */
+      g.forEach((f, i) => {
+        const row = +f.dataset.row, col = +f.dataset.col;
+        const d = row * 0.16 + col * 0.05; const t = ease(clamp((p - d) / 0.42, 0, 1));
+        const exit = clamp((p - 0.78) / 0.22, 0, 1);
+        const y = (1 - t) * 160 + exit * -220 * (1 + row * 0.15);
+        f.style.transform = `translate3d(0,${y}px,0) scale(${0.94 + t * 0.06})`;
+        f.style.opacity = t * (1 - exit);
+      });
+    };
+
+    /* ---- scene 2: curved arc of slides ---- */
+    const arc = $$('figure', scenes[1]); const AN = arc.length;
+    const drawArc = (p) => {
+      const W = stage.clientWidth; const R = W * 0.78; const step = 0.38;
+      const centre = -1.2 + p * (AN + 1.4); /* which slide index is in the middle */
+      arc.forEach((f, i) => {
+        const a = (i - centre) * step; const vis = Math.abs(a) < Math.PI * 0.62;
+        const x = Math.sin(a) * R, z = (Math.cos(a) - 1) * R * 0.9;
+        const ry = -a * 0.9; const sc = 0.82 + 0.18 * Math.cos(Math.min(Math.abs(a), 1.5));
+        const op = vis ? clamp(1.3 - Math.abs(a) / (Math.PI * 0.55), 0, 1) : 0;
+        f.style.transform = `translate3d(calc(-50% + ${x}px), calc(-50% + ${stage.clientHeight * 0.14}px), ${z}px) rotateY(${ry}rad) scale(${sc})`;
+        f.style.opacity = op; f.style.zIndex = Math.round(100 - Math.abs(a) * 40);
+      });
+    };
+
+    /* ---- scene 3: tunnel ---- */
+    const tun = $$('figure', scenes[2]); const TN = tun.length;
+    const drawTunnel = (p) => {
+      const W = stage.clientWidth, H = stage.clientHeight; const depth = 2400; const gap = 170;
+      const travel = p * (TN * gap + 300);
+      tun.forEach((f, i) => {
+        const side = i % 2 ? 1 : -1; const lane = Math.floor(i / 2) % 2; /* two lanes per side */
+        let z = -i * gap - 300 + travel;
+        const x = side * (W * 0.3 + lane * 110); const y = H * 0.1 + (lane ? -1 : 1) * H * 0.13 + (i % 3 - 1) * 30;
+        const op = z > 150 ? clamp(1 - (z - 150) / 350, 0, 1) : clamp((z + depth) / 900, 0, 1);
+        f.style.transform = `translate3d(calc(-50% + ${x}px), calc(-50% + ${y}px), ${z}px) rotateY(${-side * 50}deg)`;
+        f.style.opacity = op; f.style.zIndex = Math.round(1000 + z);
+      });
+    };
+
+    /* ---- scene 4: three rows sliding in opposite directions ---- */
+    const rows = $$('.row', scenes[3]);
+    const drawRows = (p) => {
+      rows.forEach((r, i) => {
+        const dir = i % 2 ? 1 : -1; const w = r.scrollWidth - stage.clientWidth;
+        const x = dir * (w * (0.5 - p) ) + (i === 1 ? 0 : 0);
+        const tilt = (p - 0.5) * (i % 2 ? -6 : 6);
+        r.style.transform = `translate3d(${x}px,0,0) rotate(${tilt * 0.25}deg)`;
+        r.style.opacity = clamp(Math.min(p / 0.12, (1 - p) / 0.12), 0, 1);
+      });
+    };
+    const draws = [drawGrid, drawArc, drawTunnel, drawRows];
+
+    let active = -1, raf = 0;
+    const setWord = (i) => {
+      if (i === active) return; active = i;
+      word.classList.add('out'); cap.classList.add('out');
+      setTimeout(() => { word.textContent = WORDS[i]; word.classList.add('pre'); word.classList.remove('out'); void word.offsetWidth; word.classList.remove('pre'); cap.textContent = CAPS[i]; cap.classList.remove('out'); cnt.textContent = String(i + 1).padStart(2, '0'); }, 320);
+      scenes.forEach((s, k) => s.classList.toggle('on', k === i));
+    };
+    const render = () => {
+      raf = 0;
+      const r = skills.getBoundingClientRect(); const total = r.height - window.innerHeight;
+      const prog = clamp(-r.top / total, 0, 1);
+      const seg = 1 / N; const i = Math.min(N - 1, Math.floor(prog / seg)); const p = clamp((prog - i * seg) / seg, 0, 1);
+      setWord(i);
+      draws[i](p);
+      bars.forEach((b, k) => b.style.setProperty('--p', k < i ? 1 : k === i ? p : 0));
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(render); };
+    /* preload scene images a screen and a half before the section pins */
+    new IntersectionObserver((en, io) => { if (en[0].isIntersecting) { $$('.scene img', skills).forEach(im => { im.loading = 'eager'; }); io.disconnect(); } }, { rootMargin: '150% 0px' }).observe(skills);
+    layoutGrid(); window.addEventListener('resize', () => { layoutGrid(); onScroll(); });
+    window.addEventListener('scroll', onScroll, { passive: true }); render();
+  } else if (skills) {
+    const T = ['Первые экраны', 'Презентации', 'Брендинг', 'Соцсети'];
+    $$('.scene', skills).forEach((s, i) => s.dataset.title = T[i]);
   }
 
   /* ---------- PROLIGHT bulbs ---------- */
