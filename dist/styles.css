@@ -504,13 +504,14 @@ a.wordmark:hover{color:var(--text)}
 @media (max-width:900px){.process{grid-template-columns:1fr}.pay{position:static}.step{grid-template-columns:52px 1fr;gap:16px}.step .t{grid-column:2;padding:0}}
 
 /* ---------- About ---------- */
-.about{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:48px;align-items:start}
+.about{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:48px;align-items:stretch}
+.about .portrait{align-self:start}
 .portrait{position:sticky;top:96px;border-radius:28px;overflow:hidden;background:#111827;border:1px solid var(--dark-border);aspect-ratio:4/5;display:flex;align-items:flex-end;justify-content:center;isolation:isolate}
 .portrait{background:#3f8ff2;aspect-ratio:1717/2576}
 .portrait img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%}
 .portrait .nm{position:absolute;left:0;right:0;bottom:0;padding:48px 22px 20px;display:flex;flex-direction:column;gap:2px;background:linear-gradient(transparent,rgba(10,14,23,.85));z-index:1}
 .portrait .nm b{font-weight:600;font-size:16px}.portrait .nm span{font-size:13px;color:rgba(255,255,255,.55)}
-.about-text{display:flex;flex-direction:column;gap:28px}
+.about-text{display:flex;flex-direction:column;gap:28px;justify-content:space-between} /* top of text = top of photo, buttons = bottom of photo */
 .about-text .lead{color:rgba(255,255,255,.8);max-width:none;font-size:clamp(17px,1.4vw,20px)}
 .exp{display:flex;flex-direction:column}
 .exp li{display:grid;grid-template-columns:120px 1fr;gap:16px;padding:16px 0;border-top:1px solid var(--dark-border);font-size:15px}
@@ -551,7 +552,8 @@ a.wordmark:hover{color:var(--text)}
 
 /* ---------- Final CTA / Footer ---------- */
 .final{padding:clamp(80px,10vw,140px) 0 36px}
-.final .h2{color:#fff;max-width:18ch}
+.final{position:relative;isolation:isolate}
+.final .h2{color:#fff}
 .final .lead{margin:24px 0 36px;max-width:52ch}
 .final-actions{display:flex;gap:12px;flex-wrap:wrap}
 .footer{margin-top:clamp(64px,8vw,112px);padding-top:28px;border-top:1px solid var(--dark-border);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;font-size:14px;color:rgba(255,255,255,.5)}
