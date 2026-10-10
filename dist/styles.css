@@ -554,7 +554,10 @@ a.wordmark:hover{color:var(--text)}
 .final{padding:clamp(80px,10vw,140px) 0 36px}
 .final{position:relative;isolation:isolate}
 .final .h2{color:#fff}
-.final .lead{margin:24px 0 36px;max-width:52ch}
+.final .lead{margin:18px 0 0;max-width:52ch;font-size:clamp(15px,1.2vw,17px)}
+.final-row{display:flex;justify-content:space-between;align-items:flex-start;gap:32px 48px;flex-wrap:wrap}
+.final-row .final-actions{padding-top:clamp(4px,1.2vw,18px)}
+@media (max-width:640px){.final .lead br{display:none}.final-row .final-actions{width:100%;padding-top:0}}
 .final-actions{display:flex;gap:12px;flex-wrap:wrap}
 .footer{margin-top:clamp(64px,8vw,112px);padding-top:28px;border-top:1px solid var(--dark-border);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;font-size:14px;color:rgba(255,255,255,.5)}
 .footer .links{display:flex;gap:20px;flex-wrap:wrap}
