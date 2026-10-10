@@ -600,8 +600,8 @@
     $('.skills-head', skills).after(box); box.after(nav);
     const dotEls = $$('i', dots);
     /* auto-scroll ~90 px/s; a finger or the arrows take over, auto resumes 2.5 s later */
-    const SPEED = 90, STEP = 9000;
-    let cur = -1, timer = 0, started = false, inView = false, held = 0, last = 0, pos = 0;
+    const SPEED = 130, STEP = 9000;
+    let cur = -1, timer = 0, started = false, inView = false, held = 0, last = 0, pos = 0, swapTok = 0;
     const tr = () => tracks[cur];
     const wrapPos = () => { const t = tr(), half = t.scrollWidth / 2; if (t.scrollLeft >= half) t.scrollLeft -= half; else if (t.scrollLeft <= 0) t.scrollLeft += half; pos = t.scrollLeft; };
     const tick = (now) => {
@@ -618,17 +618,18 @@
       t.addEventListener('touchend', () => hold(2500), { passive: true });
       t.addEventListener('scroll', () => { if (performance.now() < held) wrapPos(); }, { passive: true });
     });
-    const by = (dir) => { const t = tr(), f = $('figure', t); const step = (f ? f.offsetWidth : 240) + 12; hold(3000); t.scrollBy({ left: dir * step, behavior: 'smooth' }); setTimeout(wrapPos, 500); };
-    $('.prev', nav).addEventListener('click', () => by(-1));
-    $('.next', nav).addEventListener('click', () => by(1));
+    /* arrows switch the category (word + caption + carousel animate together); swipes only scroll the carousel */
+    $('.prev', nav).addEventListener('click', () => show((cur - 1 + tracks.length) % tracks.length));
+    $('.next', nav).addEventListener('click', () => show((cur + 1) % tracks.length));
     const show = (i) => {
       cur = i;
       tracks.forEach((t, k) => t.classList.toggle('on', k === i));
       $$('img', tracks[i]).forEach(im => { im.loading = 'eager'; });
       tracks[i].scrollLeft = 1; pos = 1;
       dotEls.forEach((d, k) => { d.classList.toggle('done', k < i); d.classList.remove('on'); }); void dots.offsetWidth; dotEls[i].classList.add('on');
-      word.classList.add('out'); cap.classList.add('out');
-      setTimeout(() => { word.textContent = WORDS[i]; word.classList.add('pre'); word.classList.remove('out'); void word.offsetWidth; word.classList.remove('pre'); cap.textContent = CAPS[i]; cap.classList.remove('out'); cnt.textContent = String(i + 1).padStart(2, '0'); }, 320);
+      held = 0; const tok = ++swapTok;
+      word.classList.remove('pre'); word.classList.add('out'); cap.classList.add('out');
+      setTimeout(() => { if (tok !== swapTok) return; word.textContent = WORDS[i]; word.classList.add('pre'); word.classList.remove('out'); void word.offsetWidth; word.classList.remove('pre'); cap.textContent = CAPS[i]; cap.classList.remove('out'); cnt.textContent = String(i + 1).padStart(2, '0'); }, 320);
       clearTimeout(timer); timer = setTimeout(() => next(), STEP);
     };
     const next = () => show((cur + 1) % tracks.length);
