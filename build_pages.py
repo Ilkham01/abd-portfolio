@@ -3,6 +3,11 @@ import re, os, glob
 ROOT = os.path.dirname(os.path.abspath(__file__))
 head = open(f'{ROOT}/partials/head.html').read()
 foot = open(f'{ROOT}/partials/footer.html').read()
+# cache-busting: versions from file contents, so browsers always load fresh CSS/JS after a change
+import hashlib
+_v = lambda f: hashlib.md5(open(f'{ROOT}/dist/{f}','rb').read()).hexdigest()[:8]
+head = head.replace('href="styles.css"', f'href="styles.css?v={_v("styles.css")}"')
+foot = foot.replace('src="main.js"', f'src="main.js?v={_v("main.js")}"')
 sprite = open(f'{ROOT}/dist/logo-sprite.html').read()
 
 for path in glob.glob(f'{ROOT}/pages/*.html'):
