@@ -517,6 +517,9 @@
     $$('.scene', skills).forEach((s, i) => s.dataset.title = T[i]);
   }
 
+  /* buttons: stagger the idle light sweeps so they don't all flash at once */
+  $$('.btn').forEach((b, i) => b.style.setProperty('--sd', ((i * 1.7) % 7).toFixed(1) + 's'));
+
   /* ---------- PROLIGHT bulbs ---------- */
   const bulbs = $$('.bulb');
   if (bulbs.length) {
