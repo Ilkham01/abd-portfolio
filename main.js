@@ -345,7 +345,7 @@
   });
 
   /* ---------- Whole case card is clickable, not only «Смотреть кейс» ---------- */
-  $$('.site-big').forEach(card => {
+  $$('.site-big, .case').forEach(card => {
     const link = $('a.link-arrow[href$=".html"]', card); if (!link) return;
     card.classList.add('card-link');
     card.addEventListener('click', e => {
