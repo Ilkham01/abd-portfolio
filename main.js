@@ -192,10 +192,13 @@
   if (fig && $('canvas', fig)) {
     const canvas = $('canvas', fig);
     const fine = matchMedia('(pointer:fine)').matches && matchMedia('(min-width:1024px)').matches;
+    const phone = !matchMedia('(min-width:1024px)').matches;
+    /* phones: the head sits between the headline and the text */
+    if (phone) { const h1 = $('.hero .h1'); if (h1) h1.after(fig); }
     const reduced = matchMedia('(prefers-reduced-motion:reduce)').matches;
     const lowEnd = (navigator.deviceMemory && navigator.deviceMemory <= 2);
     let gl = null; try { gl = canvas.getContext('webgl2') || canvas.getContext('webgl'); } catch (e) {}
-    if (gl && fine && !reduced && !lowEnd && (fig.dataset.depth || fig.dataset.model)) {
+    if (gl && (fine || phone) && !reduced && !lowEnd && (fig.dataset.depth || fig.dataset.model)) {
       const mods = [import('three')];
       if (fig.dataset.model) mods.push(import('three/addons/loaders/GLTFLoader.js'));
       Promise.all(mods).then(([THREE, G]) => initAvatar(THREE, G && G.GLTFLoader, canvas, fig)).catch(() => {});
@@ -295,11 +298,20 @@
     document.addEventListener('pointerleave', () => { tx = 0; ty = 0; });
     new IntersectionObserver(([en]) => { visible = en.isIntersecting; }, { threshold: 0 }).observe(wrap);
     const k = wrap.dataset.depth ? 0.075 : 0.06;
+    /* no cursor (phones/tablets): the head looks around by itself — a new random direction every 1.6–3.2 s */
+    const auto = !matchMedia('(pointer:fine)').matches || window.innerWidth < 1024;
+    let nextLook = 0;
+    const lookAround = (now) => {
+      if (now < nextLook) return; nextLook = now + 1600 + Math.random() * 1600;
+      const nx = (Math.random() - 0.5) * 1.6, ny = (Math.random() - 0.5) * 1.2;
+      ty = nx * amp.y; tx = ny * amp.x; if (wrap._light) wrap._light.set(nx * 1.6, -ny * 1.6);
+    };
     const loop = (now) => {
       requestAnimationFrame(loop);
       if (!visible || document.hidden) return;
       const t = (now - t0) / 1000;
       if (wrap._time) wrap._time.value = t;
+      if (auto) lookAround(now);
       const idleY = Math.sin(t * 0.6) * (wrap.dataset.depth ? 0.035 : 0.09), idleX = Math.sin(t * 0.9 + 1) * (wrap.dataset.depth ? 0.02 : 0.04), bob = Math.sin(t * 1.1) * 0.03;
       ry += ((amp.baseY + ty + idleY) - ry) * k;
       rx += ((amp.baseX + tx + idleX) - rx) * k;
@@ -309,6 +321,9 @@
     };
     requestAnimationFrame(loop);
   }
+
+  /* ---------- Desktop ↔ phone layouts differ (pinned showcase, avatar position): reload when the window crosses 1024px ---------- */
+  { const mq = matchMedia('(min-width:1024px)'); const h = () => location.reload(); if (mq.addEventListener) mq.addEventListener('change', h); else if (mq.addListener) mq.addListener(h); }
 
   /* ---------- Scroll cue: hide after first scroll ---------- */
   const markScrolled = () => { if (window.scrollY > 80) document.documentElement.classList.add('scrolled'); else document.documentElement.classList.remove('scrolled'); };
@@ -378,11 +393,16 @@
     });
   });
 
-  /* ---------- Stacking cards (generic): the card underneath shrinks and dims as the next one covers it ---------- */
+  /* ---------- Stacking cards (generic): the card underneath shrinks and dims as the next one covers it.
+     Works on phones too. A card taller than the screen sticks only once its bottom is visible, so nothing is hidden. ---------- */
   $$('.stack').forEach(stack => {
     const items = Array.from(stack.children);
-    items.forEach((c, i) => c.style.setProperty('--i', i));
-    if (matchMedia('(prefers-reduced-motion:reduce)').matches || !matchMedia('(min-width:1024px)').matches) return;
+    if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    const place = () => items.forEach((c, i) => {
+      const head = window.innerWidth < 1024 ? 76 : 84;
+      const top = Math.min(head + i * 12, window.innerHeight - c.offsetHeight - 16);
+      c.style.top = top + 'px';
+    });
     const update = () => {
       items.forEach((c, i) => {
         const next = items[i + 1]; if (!next) { c.style.transform = ''; c.style.filter = ''; return; }
@@ -392,7 +412,10 @@
         c.style.filter = `brightness(${1 - p * 0.3})`;
       });
     };
-    window.addEventListener('scroll', update, { passive: true }); window.addEventListener('resize', update); update();
+    let raf = 0;
+    window.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; update(); }); }, { passive: true });
+    window.addEventListener('resize', () => { place(); update(); }); window.addEventListener('load', () => { place(); update(); });
+    place(); update();
   });
 
   /* ---------- Skills showcase: pinned section, 4 scenes driven by scroll progress ---------- */
@@ -527,8 +550,54 @@
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { layoutAll(); onScroll(); });
     window.addEventListener('scroll', onScroll, { passive: true }); render();
   } else if (skills) {
-    const T = ['Первые экраны', 'Презентации', 'Брендинг', 'Соцсети'];
-    $$('.scene', skills).forEach((s, i) => s.dataset.title = T[i]);
+    /* phones/tablets: the category word changes on its own, and each category shows its works in a self-playing carousel */
+    const WORDS = ['первые экраны', 'презентации', 'брендинг и мерч', 'креативы для соцсетей'];
+    const CAPS = ['Концепты первых экранов для сайтов и приложений', 'Слайды для курсов, форумов и бизнес-презентаций', 'Логотипы, упаковка, меню и мерч', 'Сторис и посты для Instagram'];
+    const LIMIT = [8, 10, 12, 12];
+    const scenes = $$('.scene', skills), word = $('.skw-in', skills), cap = $('.skills-cap', skills), cnt = $('.skills-count b', skills);
+    const box = document.createElement('div'); box.className = 'mcar';
+    const dots = document.createElement('div'); dots.className = 'mcar-dots';
+    const H = Math.round(Math.min(260, Math.max(190, window.innerWidth * 0.56)));
+    box.style.setProperty('--mh', H + 'px');
+    const tracks = scenes.map((sc, i) => {
+      let figs = $$('figure', sc);
+      if (i === 3) { /* stories and posts alternate so the strip is varied */
+        const st = figs.filter(f => f.classList.contains('tall')), po = figs.filter(f => !f.classList.contains('tall')); figs = [];
+        for (let k = 0; k < Math.max(st.length, po.length); k++) { if (po[k]) figs.push(po[k]); if (st[k]) figs.push(st[k]); }
+      }
+      figs = figs.slice(0, LIMIT[i]);
+      const tr = document.createElement('div'); tr.className = 'mcar-track';
+      const add = (f, clone) => {
+        const n = clone ? f.cloneNode(true) : f; n.removeAttribute('style');
+        if (clone) { n.setAttribute('aria-hidden', 'true'); n.addEventListener('click', () => { const im = $('img', n); openLb(im.currentSrc || im.src, n.dataset.cap); }); }
+        tr.appendChild(n);
+      };
+      figs.forEach(f => add(f, false)); figs.forEach(f => add(f, true)); /* doubled for a seamless loop */
+      box.appendChild(tr);
+      const d = document.createElement('i'); dots.appendChild(d);
+      return tr;
+    });
+    $('.skills-head', skills).after(box); box.after(dots);
+    const STEP = 7000; skills.style.setProperty('--step', STEP / 1000 + 's');
+    const dotEls = $$('i', dots);
+    let cur = -1, timer = 0, started = false;
+    const show = (i) => {
+      cur = i;
+      tracks.forEach((t, k) => t.classList.toggle('on', k === i));
+      $$('img', tracks[i]).forEach(im => { im.loading = 'eager'; });
+      /* constant speed whatever the strip length: ~45 px per second */
+      requestAnimationFrame(() => { const w = tracks[i].scrollWidth / 2; tracks[i].style.setProperty('--dur', Math.max(18, w / 45) + 's'); });
+      dotEls.forEach((d, k) => { d.classList.toggle('done', k < i); d.classList.remove('on'); }); void dots.offsetWidth; dotEls[i].classList.add('on');
+      word.classList.add('out'); cap.classList.add('out');
+      setTimeout(() => { word.textContent = WORDS[i]; word.classList.add('pre'); word.classList.remove('out'); void word.offsetWidth; word.classList.remove('pre'); cap.textContent = CAPS[i]; cap.classList.remove('out'); cnt.textContent = String(i + 1).padStart(2, '0'); }, 320);
+      clearTimeout(timer); timer = setTimeout(() => show((cur + 1) % tracks.length), STEP);
+    };
+    /* start when the block comes into view, pause when it leaves */
+    new IntersectionObserver(([en]) => {
+      if (en.isIntersecting) { if (!started) { started = true; show(0); } else { tracks.forEach(t => t.style.animationPlayState = 'running'); timer = setTimeout(() => show((cur + 1) % tracks.length), STEP); } }
+      else if (started) { clearTimeout(timer); tracks.forEach(t => t.style.animationPlayState = 'paused'); }
+    }, { threshold: 0.15 }).observe(skills);
+    dotEls.forEach((d, k) => d.addEventListener('click', () => show(k)));
   }
 
   /* services: mockups drift gently with the scroll */
