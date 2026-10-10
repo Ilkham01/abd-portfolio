@@ -406,20 +406,6 @@ a.wordmark:hover{color:var(--text)}
 @media (prefers-reduced-motion:reduce){.bulb{animation:none}}
 
 /* ---------- Gallery ---------- */
-.filters{display:flex;gap:8px;flex-wrap:wrap}
-.filter{height:40px;padding:0 16px;border-radius:999px;font-size:14px;font-weight:600;background:#fff;color:var(--muted);border:1px solid var(--line);transition:all .3s}
-.filter:hover{color:var(--text)}
-.filter.active{background:var(--pill);color:#fff;border-color:transparent}
-.masonry{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
-.masonry .col{display:flex;flex-direction:column;gap:16px;min-width:0}
-.masonry .g{border-radius:18px;overflow:hidden;background:#fff;box-shadow:var(--shadow);position:relative;cursor:zoom-in;transition:transform .8s var(--ease),box-shadow .8s var(--ease)}
-.masonry .g:hover{box-shadow:var(--shadow-lg)}
-.masonry .g img{width:100%;height:auto;transition:transform 1.4s var(--ease)}
-.masonry .g:hover img{transform:scale(1.04)}
-.masonry .g .cap{position:absolute;left:0;right:0;bottom:0;padding:28px 16px 14px;background:linear-gradient(transparent,rgba(10,14,23,.75));color:#fff;font-size:13px;font-weight:600;opacity:0;transition:opacity .5s}
-.masonry .g:hover .cap{opacity:1}
-@media (max-width:900px){.masonry{grid-template-columns:repeat(2,1fr)}}
-@media (max-width:520px){.masonry{gap:10px}.masonry .col{gap:10px}.masonry .g{border-radius:14px}.masonry .g .cap{display:none}}
 
 /* ---------- Services ---------- */
 .services{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
@@ -648,3 +634,64 @@ body.lb-open{overflow:hidden}
 @media (hover:none){.fcap{display:none}}
 .case-page .final .sec-num{display:none}
 .page[hidden]{display:none}
+
+/* ---------- Skills: pinned scroll showcase ---------- */
+.skills{position:relative;height:calc(4 * 140vh + 40vh)}
+.skills-pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;display:flex;flex-direction:column}
+.skills-head{padding-top:104px;position:relative;z-index:3;pointer-events:none}
+.skills-head .sec-num{color:rgba(255,255,255,.5);margin-bottom:14px;padding-top:0}
+.skills-head .h2{color:#fff}
+.skw{display:block;color:rgba(255,255,255,.42);position:relative;height:1.05em;overflow:hidden}
+.skw-in{display:block;will-change:transform,opacity;transition:transform .7s var(--ease),opacity .5s var(--ease),filter .7s var(--ease)}
+.skw-in.out{transform:translateY(-110%);opacity:0;filter:blur(6px)}
+.skw-in.pre{transition:none;transform:translateY(110%);opacity:0;filter:blur(6px)}
+.skills-meta{display:flex;gap:28px;align-items:center;margin-top:22px;font-size:14px;color:rgba(255,255,255,.6)}
+.skills-count{font-variant-numeric:tabular-nums}.skills-count b{color:#fff;font-weight:500}
+.skills-cap{transition:opacity .5s}.skills-cap.out{opacity:0}
+.skills-stage{position:absolute;inset:0;z-index:1;pointer-events:none}
+.scene{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .6s var(--ease),visibility 0s .6s}
+.scene.on{opacity:1;visibility:visible;transition:opacity .6s var(--ease);pointer-events:auto}
+.scene figure{position:absolute;margin:0;border-radius:14px;overflow:hidden;background:#111827;box-shadow:0 30px 60px -30px rgba(0,0,0,.8);will-change:transform,opacity;cursor:zoom-in}
+.scene figure img{width:100%;height:100%;object-fit:cover;display:block}
+.skills-progress{position:absolute;right:24px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:3}
+.skills-progress i{width:3px;height:28px;border-radius:2px;background:rgba(255,255,255,.14);overflow:hidden;position:relative}
+.skills-progress i::after{content:'';position:absolute;left:0;right:0;top:0;height:100%;background:var(--accent);transform:scaleY(var(--p,0));transform-origin:top}
+/* scene 1: grid of first screens rising in rows */
+.scene-grid{perspective:1400px}
+.scene-grid figure{width:calc((100% - 2 * 18px) / 3);aspect-ratio:16/10}
+.scene-grid figure.ph{aspect-ratio:9/19.5;width:14%}
+/* scene 2: curved arc of slides */
+.scene-arc{perspective:1600px;perspective-origin:50% 50%}
+.scene-arc figure{width:min(30vw,460px);aspect-ratio:16/9;left:50%;top:50%;margin:0;transform-origin:50% 50%}
+/* scene 3: tunnel */
+.scene-tunnel{perspective:900px;perspective-origin:50% 60%}
+.scene-tunnel figure{width:min(22vw,320px);aspect-ratio:4/3;left:50%;top:50%}
+/* scene 4: rows */
+.scene-rows .row{position:absolute;left:0;right:0;display:flex;gap:18px;align-items:center;will-change:transform}
+.scene-rows figure{position:relative;flex:none;width:10vw;aspect-ratio:4/5;border-radius:12px}
+.scene-rows figure.tall{width:8.2vw;aspect-ratio:9/16}
+.scene-rows figure.wide{width:17vw;aspect-ratio:16/9}
+.scene-rows .row-a{top:33%}.scene-rows .row-b{top:56%}.scene-rows .row-c{top:80%}
+@media (max-width:1023px){
+  .skills{height:auto}
+  .skills-pin{position:static;height:auto;overflow:visible;padding:72px 0 40px}
+  .skills-head{padding-top:0;pointer-events:auto}
+  .skills-stage{position:static;pointer-events:auto;margin-top:28px}
+  .scene{position:static;opacity:1;visibility:visible;display:block;white-space:nowrap;overflow-x:auto;padding:0 var(--gutter) 20px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+  .scene::before{content:attr(data-title);display:block;position:sticky;left:0;font-size:14px;color:rgba(255,255,255,.55);margin:14px 0 10px}
+  .scene figure{position:relative!important;transform:none!important;opacity:1!important;display:inline-block;vertical-align:top;margin-right:12px;width:68vw;aspect-ratio:16/10;scroll-snap-align:start}
+  .scene-arc figure{width:70vw;aspect-ratio:16/9}
+  .scene-tunnel figure{width:46vw;aspect-ratio:4/3}
+  .scene-rows{overflow:visible;padding:0}
+  .scene-rows::before{padding:0 var(--gutter)}
+  .scene-rows .row{position:static;overflow-x:auto;padding:0 var(--gutter) 12px;transform:none!important;opacity:1!important}
+  .scene-rows figure{width:34vw}.scene-rows figure.tall{width:30vw}.scene-rows figure.wide{width:60vw}
+  .skills-progress,.skw,.skills-meta{display:none}
+  .skills-head .h2 br{display:none}
+}
+/* ---------- Stacking cards (sites) ---------- */
+.stack{display:flex;flex-direction:column;gap:24px}
+.stack > *{position:sticky;top:calc(84px + var(--i,0) * 14px);transform-origin:50% 0;will-change:transform,filter}
+.stack .site-big,.stack .sites-small{margin-top:0}
+@media (max-width:1023px){.stack > *{position:static}}
+@media (prefers-reduced-motion:reduce){.stack > *{position:static}.scene figure{transform:none!important;opacity:1!important}}
