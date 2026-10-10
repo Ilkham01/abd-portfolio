@@ -29,7 +29,7 @@
   --font:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
   --rv-y:36px;--rv-t:1.1s;--rv-tt:1.4s;
 }
-@media (max-width:640px){:root{--gutter:18px;--radius:20px;--radius-s:14px;--sheet-r:22px;--rv-y:18px;--rv-t:.9s;--rv-tt:1s}}
+@media (max-width:640px){:root{--gutter:18px;--radius:20px;--radius-s:14px;--sheet-r:22px;--rv-y:30px;--rv-t:.9s;--rv-tt:1.1s}}
 
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -174,7 +174,8 @@ p{text-wrap:pretty}
 @keyframes phoneShake{0%,38%,100%{transform:rotate(0)}5%,15%,25%{transform:rotate(-14deg)}10%,20%,30%{transform:rotate(14deg)}}
 .mmenu-phone{font-size:22px!important;font-weight:500!important;letter-spacing:-.02em!important;color:rgba(255,255,255,.8)!important;padding:18px 0 0!important}
 .menu-open .mmenu .mmenu-phone{transition-delay:.4s}
-@media (max-width:900px){.hphone{padding:0;width:40px;min-height:40px;justify-content:center;border:0;background:none}.hphone span{display:none}.hphone i{width:34px;height:34px}.hphone svg{width:16px;height:16px}}
+@media (max-width:900px){.hphone{min-height:38px;padding:4px 12px 4px 4px;gap:7px;font-size:13.5px}.hphone i{width:30px;height:30px}.hphone svg{width:14px;height:14px}}
+@media (max-width:380px){.hphone{padding:4px 10px 4px 4px;gap:6px;font-size:12.5px}.hphone i{width:26px;height:26px}.hphone svg{width:12px;height:12px}.header-in{gap:8px}}
 @media (prefers-reduced-motion:reduce){.hphone i::before,.hphone i::after,.hphone svg{animation:none}}
 .burger{display:none;width:40px;height:40px;border-radius:999px;align-items:center;justify-content:center;color:#fff}
 .burger span{display:block;width:18px;height:2px;background:currentColor;border-radius:2px;position:relative;transition:background .3s}
@@ -186,7 +187,7 @@ p{text-wrap:pretty}
 .mmenu{position:fixed;inset:0;z-index:45;background:rgba(10,14,23,.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;flex-direction:column;justify-content:center;padding:0 28px;opacity:0;visibility:hidden;transition:opacity .5s var(--ease),visibility 0s .5s}
 .menu-open .mmenu{opacity:1;visibility:visible;transition:opacity .5s var(--ease)}
 .mmenu a{font-size:34px;font-weight:600;letter-spacing:-.05em;color:#fff;padding:12px 0;opacity:0;transform:translateY(24px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
-.mmenu .btn{margin-top:28px;opacity:0;transform:translateY(24px);transition:opacity .6s var(--ease) .35s,transform .6s var(--ease) .35s}
+.mmenu .btn{font-size:16px;letter-spacing:-.01em;padding:14px 24px;margin-top:28px;opacity:0;transform:translateY(24px);transition:opacity .6s var(--ease) .35s,transform .6s var(--ease) .35s}
 .menu-open .mmenu a,.menu-open .mmenu .btn{opacity:1;transform:none}
 .menu-open .mmenu a:nth-child(1){transition-delay:.05s}.menu-open .mmenu a:nth-child(2){transition-delay:.1s}.menu-open .mmenu a:nth-child(3){transition-delay:.15s}.menu-open .mmenu a:nth-child(4){transition-delay:.2s}.menu-open .mmenu a:nth-child(5){transition-delay:.25s}
 .menu-open{overflow:hidden}
@@ -251,11 +252,13 @@ p{text-wrap:pretty}
   .hero{padding:110px 0 56px;min-height:0}
   .hero-bg i{filter:blur(40px)}
   .hero-main{max-width:none}
-  .hero-figure{display:none}
+  .hero-figure{position:relative;right:auto;top:auto;transform:none;width:min(250px,62vw);margin:14px auto 0;display:block}
+  .hero-main .h1{width:auto}
+  .hero .h1 .tw{min-width:0}
 }
 @media (max-width:640px){
   .hero{padding:96px 0 48px}
-  .hero .h1{font-size:clamp(36px,10.5vw,52px)}
+  .hero .h1{font-size:clamp(40px,11.4vw,54px)}
   .hero .h1 .l1{white-space:normal}
   .hero-stats{flex-wrap:wrap;gap:16px 28px;margin-top:32px}
   .hero-actions .btn{flex:1 1 100%}
@@ -727,29 +730,31 @@ body.lb-open{overflow:hidden}
 .scene-rows .row{position:absolute;left:0;display:flex;gap:18px;align-items:center;will-change:transform}
 .scene-rows figure{position:relative;flex:none;border-radius:12px}
 @media (max-width:1023px){
+  /* phones/tablets: one auto-playing carousel; the category word changes and the carousel swaps with it */
   .skills{height:auto}
-  .skills-pin{position:static;height:auto;overflow:visible;padding:72px 0 40px}
+  .skills-pin{position:static;height:auto;overflow:hidden;padding:72px 0 56px}
   .skills-head{padding-top:0;pointer-events:auto}
-  .skills-stage{position:static;pointer-events:auto;margin-top:28px}
-  .scene{position:static;opacity:1;visibility:visible;display:block;white-space:nowrap;overflow-x:auto;padding:0 var(--gutter) 20px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
-  .scene::before{content:attr(data-title);display:block;position:sticky;left:0;font-size:14px;color:rgba(255,255,255,.55);margin:14px 0 10px}
-  .scene figure{position:relative!important;transform:none!important;opacity:1!important;display:inline-block;vertical-align:top;margin-right:12px;width:68vw;aspect-ratio:16/10;scroll-snap-align:start}
-  .scene-arc figure{width:70vw;aspect-ratio:16/9}
-  .scene-tunnel figure{width:auto;height:46vw;aspect-ratio:auto;border-radius:10px}
-  .scene-tunnel figure img{width:auto}
-  .scene-grid figure.ph{width:34vw;aspect-ratio:785/1600}
-  .scene-rows{overflow:visible;padding:0}
-  .scene-rows::before{padding:0 var(--gutter)}
-  .scene-rows .row{position:static;overflow-x:auto;padding:0 var(--gutter) 12px;transform:none!important;opacity:1!important}
-  .scene-rows figure{width:34vw;aspect-ratio:4/5}.scene-rows figure.tall{width:30vw;aspect-ratio:9/16}
-  .skills-progress,.skw,.skills-meta{display:none}
-  .skills-head .h2 br{display:none}
+  .skills-stage,.skills-progress{display:none}
+  .skills-meta{margin-top:14px;font-size:13px;gap:16px}
+  .mcar{position:relative;margin-top:28px;height:var(--mh,230px)}
+  .mcar-track{position:absolute;left:0;top:0;height:100%;display:flex;gap:12px;opacity:0;visibility:hidden;transition:opacity .6s var(--ease),visibility 0s .6s;will-change:transform}
+  .mcar-track.on{opacity:1;visibility:visible;transition:opacity .6s var(--ease);animation:mcar var(--dur,40s) linear infinite}
+  .mcar-track figure{position:relative;margin:0;height:100%;flex:none;border-radius:12px;overflow:hidden;background:#111827;cursor:zoom-in}
+  .mcar-track figure.ph{background:none;border-radius:0}
+  .mcar-track img{height:100%;width:auto;display:block}
+  @keyframes mcar{to{transform:translateX(calc(-50% - 6px))}}
+  .mcar-dots{display:flex;gap:6px;margin-top:22px}
+  .mcar-dots i{height:3px;flex:1;max-width:56px;border-radius:2px;background:rgba(255,255,255,.14);overflow:hidden;position:relative}
+  .mcar-dots i::after{content:'';position:absolute;inset:0;background:var(--accent);transform:scaleX(0);transform-origin:left}
+  .mcar-dots i.done::after{transform:scaleX(1)}
+  .mcar-dots i.on::after{animation:mdot var(--step,6s) linear forwards}
+  @keyframes mdot{to{transform:scaleX(1)}}
 }
+@media (max-width:1023px) and (prefers-reduced-motion:reduce){.mcar-track.on{animation:none;overflow-x:auto}}
 /* ---------- Stacking cards (sites) ---------- */
 .stack{display:flex;flex-direction:column;gap:24px}
 .stack > *{position:sticky;top:calc(84px + var(--i,0) * 14px);transform-origin:50% 0;will-change:transform,filter}
 .stack .site-big{margin-top:0}
-@media (max-width:1023px){.stack > *{position:static}}
 @media (prefers-reduced-motion:reduce){.stack > *{position:static}.scene figure{transform:none!important;opacity:1!important}}
 
 /* Case: mobile version — text on the left, phone on the right; while the section is pinned the phone screen scrolls to the very end */
@@ -767,3 +772,16 @@ body.lb-open{overflow:hidden}
 .card-link{cursor:pointer}
 .card-link:hover .link-arrow svg{transform:translateX(4px)}
 .link-arrow svg{transition:transform .5s var(--ease)}
+
+/* phones: buttons stay on one line — smaller type instead of a second line */
+@media (max-width:640px){
+  .btn{white-space:nowrap;font-size:15px;padding-left:18px;padding-right:18px}
+  .btn-lg{min-height:54px;font-size:15.5px}
+  .btn svg{width:16px;height:16px}
+}
+@media (max-width:360px){.btn,.btn-lg{font-size:14px;padding-left:14px;padding-right:14px}}
+
+.m-only{display:none}
+@media (max-width:1023px){br.m-only{display:inline}}
+.skills-count{white-space:nowrap}
+@media (max-width:400px){.case-hero .h1{font-size:clamp(28px,8.6vw,36px)}}
