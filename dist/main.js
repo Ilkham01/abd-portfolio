@@ -501,7 +501,10 @@
       raf = 0;
       const r = skills.getBoundingClientRect(); const total = r.height - window.innerHeight * 2; /* the last viewport is reserved for the next sheet sliding over */
       const prog = clamp(-r.top / total, 0, 1);
-      const seg = 1 / N; const i = Math.min(N - 1, Math.floor(prog / seg)); const p = clamp((prog - i * seg) / seg, 0, 1);
+      /* scenes get different scroll lengths: presentations and branding run slower */
+      const SW = [1, 1.5, 1.9, 1]; const sum = SW.reduce((a, b) => a + b, 0);
+      let i = 0, acc = 0; while (i < N - 1 && prog >= (acc + SW[i]) / sum) { acc += SW[i]; i++; }
+      const p = clamp((prog - acc / sum) / (SW[i] / sum), 0, 1);
       setWord(i);
       draws[i](p);
       bars.forEach((b, k) => b.style.setProperty('--p', k < i ? 1 : k === i ? p : 0));
