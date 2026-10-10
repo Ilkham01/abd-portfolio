@@ -612,11 +612,16 @@
       pos += SPEED * dt; tr().scrollLeft = pos; wrapPos();
     };
     requestAnimationFrame(tick);
-    const hold = (ms = 2500) => { held = performance.now() + ms; clearTimeout(timer); timer = setTimeout(() => next(), STEP + ms); };
+    const hold = (ms = 2500) => { /* user is looking: pause scrolling, restart this category's full timer and its progress bar */
+      held = performance.now() + ms; clearTimeout(timer); timer = setTimeout(() => next(), STEP);
+      const d = dotEls[cur]; if (d) { d.classList.remove('on'); void d.offsetWidth; d.classList.add('on'); }
+    };
     tracks.forEach(t => {
-      t.addEventListener('touchstart', () => hold(60000), { passive: true });
+      /* a page scroll that starts on the carousel ends in touchcancel, not touchend — both resume the auto mode */
+      t.addEventListener('touchstart', () => hold(4000), { passive: true });
       t.addEventListener('touchend', () => hold(2500), { passive: true });
-      t.addEventListener('scroll', () => { if (performance.now() < held) wrapPos(); }, { passive: true });
+      t.addEventListener('touchcancel', () => hold(1500), { passive: true });
+      t.addEventListener('scroll', () => { if (performance.now() < held) { wrapPos(); held = Math.max(held, performance.now() + 1500); } }, { passive: true });
     });
     /* arrows switch the category (word + caption + carousel animate together); swipes only scroll the carousel */
     $('.prev', nav).addEventListener('click', () => show((cur - 1 + tracks.length) % tracks.length));
