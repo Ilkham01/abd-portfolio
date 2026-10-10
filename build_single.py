@@ -14,7 +14,7 @@ def body_of(name):
     return attrs, s[m.end():]
 
 pages = [('index.html', 'home'), ('demping-pro.html', 'demping-pro'), ('foryou-cargo.html', 'foryou-cargo'),
-         ('autobir.html', 'autobir'), ('bai-group.html', 'bai-group'), ('prolight.html', 'prolight')]
+         ('autobir.html', 'autobir'), ('rt-fashion.html', 'rt-fashion'), ('bai-group.html', 'bai-group'), ('prolight.html', 'prolight')]
 
 def datauri(path):
     mime = mimetypes.guess_type(path)[0] or 'application/octet-stream'
