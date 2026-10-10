@@ -35,7 +35,8 @@ python3 build_single.py       # опционально: один файл abd-po
 git add -A && git commit -m "Что поменял" && git push
 ```
 
-Netlify подхватит пуш и выложит новую версию сам.
+Сайт публикуется на GitHub Pages: https://ilkham01.github.io/abd-portfolio/ — папка `dist` выкладывается в ветку `gh-pages` командой `./publish.sh "что поменял"`.
+(Netlify остался подключён, но на бесплатном тарифе упирается в месячный лимит деплоев.)
 
 ## Публикация
 
