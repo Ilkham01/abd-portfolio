@@ -334,7 +334,7 @@
   };
   $$('.frame').forEach(f => {
     setupScroll(f, '.view img', $('.bar', f) ? ($('.bar', f).offsetHeight || 24) : 0);
-    if (isTouch && !f.closest('a') && !f.hasAttribute('data-zoom')) {
+    if (isTouch && !f.closest('a') && !f.closest('.card-link') && !f.hasAttribute('data-zoom')) {
       f.addEventListener('click', () => { const img = $('.view img', f); if (img) openLb(img.currentSrc || img.src, img.alt); });
     }
   });
@@ -342,7 +342,7 @@
   $$('.phone').forEach(p => {
     if (p.closest('.mscroll')) return; /* scroll-driven instead of hover */
     setupScroll(p, '.screen img', 12);
-    if (isTouch && !p.closest('a')) p.addEventListener('click', () => { const img = $('.screen img', p); if (img) openLb(img.currentSrc || img.src, img.alt); });
+    if (isTouch && !p.closest('a') && !p.closest('.card-link')) p.addEventListener('click', () => { const img = $('.screen img', p); if (img) openLb(img.currentSrc || img.src, img.alt); });
   });
 
   /* ---------- Case mobile section: phone screen scrolls with the page while the section is pinned ---------- */
@@ -358,6 +358,17 @@
     };
     window.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(upd); }, { passive: true });
     window.addEventListener('resize', upd); img.addEventListener('load', upd); upd();
+  });
+
+  /* ---------- Whole case card is clickable, not only «Смотреть кейс» ---------- */
+  $$('.site-big').forEach(card => {
+    const link = $('a.link-arrow[href$=".html"]', card); if (!link) return;
+    card.classList.add('card-link');
+    card.addEventListener('click', e => {
+      if (e.target.closest('a, button')) return;
+      if (window.getSelection && String(window.getSelection())) return; /* let people select text */
+      if (e.metaKey || e.ctrlKey) window.open(link.href, '_blank'); else window.location.href = link.href;
+    });
   });
 
   /* ---------- Lightbox ---------- */
