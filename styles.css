@@ -767,3 +767,7 @@ body.lb-open{overflow:hidden}
   .mscroll-phone .phone{width:min(330px,calc((100vh - 140px) * .46))}
 }
 @media (max-width:900px){.mscroll{grid-template-columns:1fr}.mscroll-text{position:static}.mscroll-phone .phone{width:min(300px,78vw)}}
+
+.card-link{cursor:pointer}
+.card-link:hover .link-arrow svg{transform:translateX(4px)}
+.link-arrow svg{transition:transform .5s var(--ease)}
