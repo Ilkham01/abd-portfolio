@@ -298,20 +298,36 @@
     document.addEventListener('pointerleave', () => { tx = 0; ty = 0; });
     new IntersectionObserver(([en]) => { visible = en.isIntersecting; }, { threshold: 0 }).observe(wrap);
     const k = wrap.dataset.depth ? 0.075 : 0.06;
-    /* no cursor (phones/tablets): the head looks around by itself — a new random direction every 1.6–3.2 s */
+    /* no cursor (phones/tablets): the head follows the tilt of the phone (gyroscope);
+       until the gyroscope answers, it slowly and smoothly looks around by itself */
     const auto = !matchMedia('(pointer:fine)').matches || window.innerWidth < 1024;
-    let nextLook = 0;
-    const lookAround = (now) => {
-      if (now < nextLook) return; nextLook = now + 1600 + Math.random() * 1600;
-      const nx = (Math.random() - 0.5) * 1.6, ny = (Math.random() - 0.5) * 1.2;
-      ty = nx * amp.y; tx = ny * amp.x; if (wrap._light) wrap._light.set(nx * 1.6, -ny * 1.6);
+    let tilt = false, base = null;
+    const onTilt = (e) => {
+      if (e.beta == null || e.gamma == null) return;
+      if (!base) base = { b: e.beta, g: e.gamma };
+      base.b += (e.beta - base.b) * 0.004; base.g += (e.gamma - base.g) * 0.004; /* rest position slowly adapts to how the phone is held */
+      const nx = Math.max(-1, Math.min(1, (e.gamma - base.g) / 25)), ny = Math.max(-1, Math.min(1, (e.beta - base.b) / 25));
+      ty = nx * amp.y * 0.9; tx = ny * amp.x * 0.9; tilt = true;
+      if (wrap._light) wrap._light.set(nx * 1.6, -ny * 1.6);
+    };
+    if (auto && 'DeviceOrientationEvent' in window) {
+      if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+        /* iPhone asks once for motion access — on the first tap */
+        const ask = () => { DeviceOrientationEvent.requestPermission().then(r => { if (r === 'granted') window.addEventListener('deviceorientation', onTilt); }).catch(() => {}); };
+        window.addEventListener('touchend', ask, { once: true });
+      } else window.addEventListener('deviceorientation', onTilt);
+    }
+    const lookAround = (t) => { /* smooth idle wander: slow overlapping sines, no jumps */
+      if (tilt) return;
+      const nx = Math.sin(t * 0.37) * 0.6 + Math.sin(t * 0.83 + 1.3) * 0.25, ny = Math.sin(t * 0.29 + 2.1) * 0.45 + Math.sin(t * 0.71) * 0.15;
+      ty = nx * amp.y; tx = ny * amp.x; if (wrap._light) wrap._light.set(nx * 1.4, -ny * 1.4);
     };
     const loop = (now) => {
       requestAnimationFrame(loop);
       if (!visible || document.hidden) return;
       const t = (now - t0) / 1000;
       if (wrap._time) wrap._time.value = t;
-      if (auto) lookAround(now);
+      if (auto) lookAround(t);
       const idleY = Math.sin(t * 0.6) * (wrap.dataset.depth ? 0.035 : 0.09), idleX = Math.sin(t * 0.9 + 1) * (wrap.dataset.depth ? 0.02 : 0.04), bob = Math.sin(t * 1.1) * 0.03;
       ry += ((amp.baseY + ty + idleY) - ry) * k;
       rx += ((amp.baseX + tx + idleX) - rx) * k;
@@ -556,7 +572,9 @@
     const LIMIT = [8, 10, 12, 12];
     const scenes = $$('.scene', skills), word = $('.skw-in', skills), cap = $('.skills-cap', skills), cnt = $('.skills-count b', skills);
     const box = document.createElement('div'); box.className = 'mcar';
-    const dots = document.createElement('div'); dots.className = 'mcar-dots';
+    const nav = document.createElement('div'); nav.className = 'mcar-nav';
+    nav.innerHTML = '<div class="mcar-dots"></div><button class="mcar-btn prev" aria-label="Назад"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button><button class="mcar-btn next" aria-label="Дальше"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>';
+    const dots = $('.mcar-dots', nav);
     const H = Math.round(Math.min(260, Math.max(190, window.innerWidth * 0.56)));
     box.style.setProperty('--mh', H + 'px');
     const tracks = scenes.map((sc, i) => {
@@ -569,33 +587,56 @@
       const tr = document.createElement('div'); tr.className = 'mcar-track';
       const add = (f, clone) => {
         const n = clone ? f.cloneNode(true) : f; n.removeAttribute('style');
-        if (clone) { n.setAttribute('aria-hidden', 'true'); n.addEventListener('click', () => { const im = $('img', n); openLb(im.currentSrc || im.src, n.dataset.cap); }); }
+        const im = $('img', n); const w = +im.getAttribute('width'), h = +im.getAttribute('height');
+        if (w && h) n.style.width = Math.round(H * w / h) + 'px'; /* width known before the image loads: no jumps */
+        if (clone) { n.setAttribute('aria-hidden', 'true'); n.addEventListener('click', () => { openLb(im.currentSrc || im.src, n.dataset.cap); }); }
         tr.appendChild(n);
       };
       figs.forEach(f => add(f, false)); figs.forEach(f => add(f, true)); /* doubled for a seamless loop */
       box.appendChild(tr);
-      const d = document.createElement('i'); dots.appendChild(d);
+      dots.appendChild(document.createElement('i'));
       return tr;
     });
-    $('.skills-head', skills).after(box); box.after(dots);
-    const STEP = 7000; skills.style.setProperty('--step', STEP / 1000 + 's');
+    $('.skills-head', skills).after(box); box.after(nav);
     const dotEls = $$('i', dots);
-    let cur = -1, timer = 0, started = false;
+    /* auto-scroll ~90 px/s; a finger or the arrows take over, auto resumes 2.5 s later */
+    const SPEED = 90, STEP = 9000;
+    let cur = -1, timer = 0, started = false, inView = false, held = 0, last = 0, pos = 0;
+    const tr = () => tracks[cur];
+    const wrapPos = () => { const t = tr(), half = t.scrollWidth / 2; if (t.scrollLeft >= half) t.scrollLeft -= half; else if (t.scrollLeft <= 0) t.scrollLeft += half; pos = t.scrollLeft; };
+    const tick = (now) => {
+      requestAnimationFrame(tick);
+      const dt = last ? Math.min(0.05, (now - last) / 1000) : 0; last = now;
+      if (!started || !inView || document.hidden || cur < 0) return;
+      if (now < held) { pos = tr().scrollLeft; return; }
+      pos += SPEED * dt; tr().scrollLeft = pos; wrapPos();
+    };
+    requestAnimationFrame(tick);
+    const hold = (ms = 2500) => { held = performance.now() + ms; clearTimeout(timer); timer = setTimeout(() => next(), STEP + ms); };
+    tracks.forEach(t => {
+      t.addEventListener('touchstart', () => hold(60000), { passive: true });
+      t.addEventListener('touchend', () => hold(2500), { passive: true });
+      t.addEventListener('scroll', () => { if (performance.now() < held) wrapPos(); }, { passive: true });
+    });
+    const by = (dir) => { const t = tr(), f = $('figure', t); const step = (f ? f.offsetWidth : 240) + 12; hold(3000); t.scrollBy({ left: dir * step, behavior: 'smooth' }); setTimeout(wrapPos, 500); };
+    $('.prev', nav).addEventListener('click', () => by(-1));
+    $('.next', nav).addEventListener('click', () => by(1));
     const show = (i) => {
       cur = i;
       tracks.forEach((t, k) => t.classList.toggle('on', k === i));
       $$('img', tracks[i]).forEach(im => { im.loading = 'eager'; });
-      /* constant speed whatever the strip length: ~45 px per second */
-      requestAnimationFrame(() => { const w = tracks[i].scrollWidth / 2; tracks[i].style.setProperty('--dur', Math.max(18, w / 45) + 's'); });
+      tracks[i].scrollLeft = 1; pos = 1;
       dotEls.forEach((d, k) => { d.classList.toggle('done', k < i); d.classList.remove('on'); }); void dots.offsetWidth; dotEls[i].classList.add('on');
       word.classList.add('out'); cap.classList.add('out');
       setTimeout(() => { word.textContent = WORDS[i]; word.classList.add('pre'); word.classList.remove('out'); void word.offsetWidth; word.classList.remove('pre'); cap.textContent = CAPS[i]; cap.classList.remove('out'); cnt.textContent = String(i + 1).padStart(2, '0'); }, 320);
-      clearTimeout(timer); timer = setTimeout(() => show((cur + 1) % tracks.length), STEP);
+      clearTimeout(timer); timer = setTimeout(() => next(), STEP);
     };
-    /* start when the block comes into view, pause when it leaves */
+    const next = () => show((cur + 1) % tracks.length);
+    skills.style.setProperty('--step', STEP / 1000 + 's');
     new IntersectionObserver(([en]) => {
-      if (en.isIntersecting) { if (!started) { started = true; show(0); } else { tracks.forEach(t => t.style.animationPlayState = 'running'); timer = setTimeout(() => show((cur + 1) % tracks.length), STEP); } }
-      else if (started) { clearTimeout(timer); tracks.forEach(t => t.style.animationPlayState = 'paused'); }
+      inView = en.isIntersecting;
+      if (inView) { if (!started) { started = true; show(0); } else { clearTimeout(timer); timer = setTimeout(() => next(), STEP); dotEls[cur].style.animationPlayState = 'running'; } }
+      else if (started) { clearTimeout(timer); dotEls[cur].style.animationPlayState = 'paused'; }
     }, { threshold: 0.15 }).observe(skills);
     dotEls.forEach((d, k) => d.addEventListener('click', () => show(k)));
   }

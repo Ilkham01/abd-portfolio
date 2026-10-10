@@ -306,16 +306,16 @@ a.wordmark:hover{color:var(--text)}
 .fcard h3{font-size:clamp(24px,2.3vw,32px);line-height:1.08;letter-spacing:-.045em;font-weight:600;margin-bottom:14px}
 .fcard p{font-size:15px;line-height:1.5;color:rgba(255,255,255,.72)}
 /* rest tilt per card (like a fan) + slow hover: each card drifts on its own rhythm */
-.fcard.f1{--rz:-5deg;--ry:14deg;--ty:14px;animation:floatA 8.5s ease-in-out infinite}
-.fcard.f2{--rz:1.5deg;--ry:0deg;--ty:-10px;animation:floatB 9.8s ease-in-out infinite}
-.fcard.f3{--rz:5deg;--ry:-14deg;--ty:18px;animation:floatC 11s ease-in-out infinite}
+.fcard.f1{--rz:-5deg;--ry:14deg;--ty:14px;animation:floatA 5.6s ease-in-out infinite}
+.fcard.f2{--rz:1.5deg;--ry:0deg;--ty:-10px;animation:floatB 6.4s ease-in-out infinite}
+.fcard.f3{--rz:5deg;--ry:-14deg;--ty:18px;animation:floatC 7.2s ease-in-out infinite}
 .js .fcard.rv{transform:translateY(calc(var(--ty) + var(--rv-y))) rotateY(var(--ry)) rotateZ(var(--rz))}
 .js .fcard.rv.in{transform:translateY(var(--ty)) rotateY(var(--ry)) rotateZ(var(--rz))}
 @keyframes floatA{0%,100%{translate:0 0;rotate:0deg}50%{translate:0 -12px;rotate:-.8deg}}
 @keyframes floatB{0%,100%{translate:0 0;rotate:0deg}50%{translate:0 10px;rotate:.6deg}}
 @keyframes floatC{0%,100%{translate:0 0;rotate:0deg}50%{translate:0 -14px;rotate:.9deg}}
 .js .fcard.rv:not(.in){animation-play-state:paused}
-@media (max-width:1023px){.fcards{grid-template-columns:1fr;gap:18px;perspective:none}.fcard{min-height:0;--rz:0deg!important;--ry:0deg!important;--ty:0px!important;gap:28px;animation:none}}
+@media (max-width:1023px){.fcards{grid-template-columns:1fr;gap:18px;perspective:none}.fcard{min-height:0;--rz:0deg!important;--ry:0deg!important;--ty:0px!important;gap:28px}}
 @media (prefers-reduced-motion:reduce){.fcard{animation:none!important}}
 
 /* ---------- Device frames ---------- */
@@ -352,6 +352,7 @@ a.wordmark:hover{color:var(--text)}
 .case .meta b{display:block;font-size:13px;color:var(--muted);font-weight:600;margin-bottom:4px}
 .case .meta span{font-weight:600;font-size:15px}
 .case-visual{position:relative;min-height:320px;display:block}
+.case-visual .phone{z-index:2}
 .case-visual.v-dp,.case-visual.v-auto{padding:12px 0 24px 0}
 .case-visual.v-dp .frame,.case-visual.v-auto .frame{width:88%}
 .case-visual.v-dp .phone,.case-visual.v-auto .phone{position:absolute;right:0;bottom:0;width:26%;min-width:120px}
@@ -525,7 +526,7 @@ a.wordmark:hover{color:var(--text)}
 .tools{display:flex;flex-wrap:wrap;gap:8px}
 .tools .tag{min-height:34px;padding:6px 14px;font-size:14px}
 .about-actions{display:flex;gap:12px;flex-wrap:wrap}
-@media (max-width:900px){.about{grid-template-columns:1fr;gap:28px}.portrait{max-width:420px;aspect-ratio:1717/2576}.exp li{grid-template-columns:96px 1fr}}
+@media (max-width:900px){.about{grid-template-columns:1fr;gap:28px}.portrait{position:relative;top:auto;max-width:420px;aspect-ratio:1717/2576}.exp li{grid-template-columns:96px 1fr}}
 @media (max-width:640px){.about-actions .btn{flex:1 1 100%}}
 
 /* ---------- Review ---------- */
@@ -685,6 +686,7 @@ body.lb-open{overflow:hidden}
   .shots,.shots.three{grid-template-columns:1fr;gap:14px}
   .shots.phones{grid-template-columns:repeat(2,1fr);gap:12px}
   .shots.phones-3{grid-template-columns:repeat(3,1fr);gap:8px}
+  .shots.phones.phones-3:has(> :nth-child(4)){grid-template-columns:repeat(2,1fr);gap:12px}
   .hyp{grid-template-columns:1fr;gap:10px}
   .palette{grid-template-columns:repeat(2,1fr)}
   .next-case{grid-template-columns:1fr}
@@ -737,20 +739,29 @@ body.lb-open{overflow:hidden}
   .skills-stage,.skills-progress{display:none}
   .skills-meta{margin-top:14px;font-size:13px;gap:16px}
   .mcar{position:relative;margin-top:28px;height:var(--mh,230px)}
-  .mcar-track{position:absolute;left:0;top:0;height:100%;display:flex;gap:12px;opacity:0;visibility:hidden;transition:opacity .6s var(--ease),visibility 0s .6s;will-change:transform}
-  .mcar-track.on{opacity:1;visibility:visible;transition:opacity .6s var(--ease);animation:mcar var(--dur,40s) linear infinite}
+  .mcar-track{position:absolute;left:0;right:0;top:0;height:100%;display:flex;gap:12px;padding:0 var(--gutter);overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;opacity:0;visibility:hidden;transition:opacity .6s var(--ease),visibility 0s .6s}
+  .mcar-track::-webkit-scrollbar{display:none}
+  .mcar-track.on{opacity:1;visibility:visible;transition:opacity .6s var(--ease)}
   .mcar-track figure{position:relative;margin:0;height:100%;flex:none;border-radius:12px;overflow:hidden;background:#111827;cursor:zoom-in}
   .mcar-track figure.ph{background:none;border-radius:0}
-  .mcar-track img{height:100%;width:auto;display:block}
-  @keyframes mcar{to{transform:translateX(calc(-50% - 6px))}}
-  .mcar-dots{display:flex;gap:6px;margin-top:22px}
+  .mcar-track img{height:100%;width:100%;object-fit:cover;display:block}
+  .mcar-track figure.ph img{object-fit:contain}
+  .mcar-nav{display:flex;align-items:center;gap:10px;margin-top:20px;padding:0 var(--gutter)}
+  .mcar-dots{display:flex;gap:6px;flex:1}
+  .mcar-btn{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);flex:none}
+  .mcar-btn:active{background:rgba(255,255,255,.18)}
+  .mcar-btn svg{width:18px;height:18px}
+  /* fixed heights: changing the category never shifts the page */
+  .skills-head .h2{font-size:clamp(30px,8.6vw,44px)}
+  .skw{height:1.12em;white-space:nowrap;font-size:.84em}
+  .skills-cap{display:block;min-height:2.9em;line-height:1.45}
+  .skills-meta{align-items:flex-start}
   .mcar-dots i{height:3px;flex:1;max-width:56px;border-radius:2px;background:rgba(255,255,255,.14);overflow:hidden;position:relative}
   .mcar-dots i::after{content:'';position:absolute;inset:0;background:var(--accent);transform:scaleX(0);transform-origin:left}
   .mcar-dots i.done::after{transform:scaleX(1)}
   .mcar-dots i.on::after{animation:mdot var(--step,6s) linear forwards}
   @keyframes mdot{to{transform:scaleX(1)}}
 }
-@media (max-width:1023px) and (prefers-reduced-motion:reduce){.mcar-track.on{animation:none;overflow-x:auto}}
 /* ---------- Stacking cards (sites) ---------- */
 .stack{display:flex;flex-direction:column;gap:24px}
 .stack > *{position:sticky;top:calc(84px + var(--i,0) * 14px);transform-origin:50% 0;will-change:transform,filter}
