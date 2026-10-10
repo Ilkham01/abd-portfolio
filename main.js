@@ -340,24 +340,8 @@
   });
   $$('.shot .im').forEach(f => setupScroll(f, 'img', 0));
   $$('.phone').forEach(p => {
-    if (p.closest('.mscroll')) return; /* scroll-driven instead of hover */
     setupScroll(p, '.screen img', 12);
     if (isTouch && !p.closest('a') && !p.closest('.card-link')) p.addEventListener('click', () => { const img = $('.screen img', p); if (img) openLb(img.currentSrc || img.src, img.alt); });
-  });
-
-  /* ---------- Case mobile section: phone screen scrolls with the page while the section is pinned ---------- */
-  $$('.mscroll').forEach(sec => {
-    const img = $('.screen img', sec), screen = $('.screen', sec); if (!img) return;
-    if (reduceMotion || !matchMedia('(min-width:901px)').matches) { setupScroll($('.phone', sec), '.screen img', 12); return; }
-    let raf = 0;
-    const upd = () => { raf = 0;
-      const r = sec.getBoundingClientRect(), total = r.height - window.innerHeight;
-      const p = Math.min(1, Math.max(0, (-r.top + window.innerHeight * 0.15) / Math.max(1, total)));
-      const d = Math.max(0, img.getBoundingClientRect().height - screen.clientHeight);
-      img.style.transform = `translate3d(0,${(-p * d).toFixed(1)}px,0)`;
-    };
-    window.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(upd); }, { passive: true });
-    window.addEventListener('resize', upd); img.addEventListener('load', upd); upd();
   });
 
   /* ---------- Whole case card is clickable, not only «Смотреть кейс» ---------- */
