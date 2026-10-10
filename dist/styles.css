@@ -753,19 +753,15 @@ body.lb-open{overflow:hidden}
 @media (prefers-reduced-motion:reduce){.stack > *{position:static}.scene figure{transform:none!important;opacity:1!important}}
 
 /* Case: mobile version — text on the left, phone on the right; while the section is pinned the phone screen scrolls to the very end */
-.mscroll{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(32px,6vw,96px);align-items:start}
-.mscroll-text{position:sticky;top:clamp(120px,22vh,220px);padding-top:8px}
+.mscroll{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(32px,6vw,96px);align-items:stretch} /* text column as tall as the phone, text sticks while the phone scrolls past */
+.mscroll-text{position:sticky;top:clamp(110px,18vh,180px);align-self:start;padding-top:8px}
 .mscroll-text .lbl{font-size:14px;font-weight:500;color:var(--muted);margin-bottom:18px}
 .mscroll-text .lbl::before{content:'';display:inline-block;width:22px;height:1px;background:currentColor;vertical-align:middle;margin-right:10px;opacity:.6}
 .mscroll-text .lead{margin-top:16px;font-size:17px;color:#3f4652;max-width:46ch}
 .mscroll-phone{display:flex;justify-content:center}
 .mscroll-phone .phone{width:min(340px,100%)}
 .mscroll-phone .screen img{will-change:transform}
-@media (min-width:901px){
-  .mscroll{height:260vh}
-  .mscroll-phone{position:sticky;top:max(96px,calc(50vh - 340px))}
-  .mscroll-phone .phone{width:min(330px,calc((100vh - 140px) * .46))}
-}
+@media (min-width:901px){.mscroll-phone .phone{width:min(380px,100%)}}
 @media (max-width:900px){.mscroll{grid-template-columns:1fr}.mscroll-text{position:static}.mscroll-phone .phone{width:min(300px,78vw)}}
 
 .card-link{cursor:pointer}
