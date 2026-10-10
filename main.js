@@ -484,7 +484,7 @@
         const rw = r.scrollWidth; const xc = (b.W - rw) / 2; const travel = Math.max(rw - b.W, 0) + b.W * 0.3;
         const x = xc + dir * travel * (0.5 - p);
         r.style.transform = `translate3d(${x}px,0,0)`;
-        r.style.opacity = clamp(Math.min(p / 0.12, (1 - p) / 0.12), 0, 1);
+        r.style.opacity = clamp(p / 0.12, 0, 1); /* no fade-out: the next block covers the scene */
       });
     };
     const layoutAll = () => { layoutGrid(); layoutTunnel(); layoutRows(); };
@@ -499,7 +499,7 @@
     };
     const render = () => {
       raf = 0;
-      const r = skills.getBoundingClientRect(); const total = r.height - window.innerHeight;
+      const r = skills.getBoundingClientRect(); const total = r.height - window.innerHeight * 2; /* the last viewport is reserved for the next sheet sliding over */
       const prog = clamp(-r.top / total, 0, 1);
       const seg = 1 / N; const i = Math.min(N - 1, Math.floor(prog / seg)); const p = clamp((prog - i * seg) / seg, 0, 1);
       setWord(i);
@@ -515,6 +515,16 @@
   } else if (skills) {
     const T = ['Первые экраны', 'Презентации', 'Брендинг', 'Соцсети'];
     $$('.scene', skills).forEach((s, i) => s.dataset.title = T[i]);
+  }
+
+  /* services: mockups drift gently with the scroll */
+  const pars = $$('.svcx-media .par');
+  if (pars.length && !matchMedia('(prefers-reduced-motion:reduce)').matches) {
+    let pr = 0;
+    const upd = () => { pr = 0; const vh = window.innerHeight;
+      pars.forEach(el => { const r = el.parentElement.getBoundingClientRect(); if (r.bottom < 0 || r.top > vh) return;
+        const d = (vh / 2 - (r.top + r.height / 2)) / vh; el.style.transform = `translate3d(0,${(d * 36).toFixed(1)}px,0)`; }); };
+    window.addEventListener('scroll', () => { if (!pr) pr = requestAnimationFrame(upd); }, { passive: true }); window.addEventListener('resize', upd); upd();
   }
 
   /* buttons: stagger the idle light sweeps so they don't all flash at once */

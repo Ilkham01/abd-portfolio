@@ -433,31 +433,56 @@ a.wordmark:hover{color:var(--text)}
 /* ---------- Gallery ---------- */
 
 /* ---------- Services ---------- */
-.services{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-.svc{display:flex;flex-direction:column;gap:12px;min-height:300px;padding:28px}
-.svc .ic{width:48px;height:48px;border-radius:14px;background:var(--bg-2);display:grid;place-items:center;color:var(--blue)}
-.svc .ic svg{width:24px;height:24px}
-.svc h3{font-size:20px;letter-spacing:-.035em;line-height:1.2;font-weight:600}
-.svc p{color:var(--muted);font-size:15px}
-.svc .price{margin-top:auto;padding-top:18px;border-top:1px solid var(--line)}
-.svc .price b{display:block;font-size:26px;letter-spacing:-.03em;line-height:1;font-weight:600}
-.svc .price b small{font-size:14px;font-weight:600;color:var(--muted);letter-spacing:0;margin-right:4px}
-.svc .price span{display:block;font-size:14px;color:var(--muted);margin-top:6px}
-.svc.hot{background:linear-gradient(160deg,#0f1a3a,#0A0E17);color:#fff;border:1px solid rgba(77,182,255,.25);box-shadow:0 30px 60px -30px rgba(30,91,255,.6)}
-.svc.hot .ic{background:rgba(77,182,255,.15);color:var(--accent)}
-.svc.hot p,.svc.hot .price span,.svc.hot .price b small{color:rgba(255,255,255,.62)}
-.svc.hot .price{border-color:rgba(255,255,255,.12)}
-.svc .badge{position:absolute;top:18px;right:18px}
-.also{margin-top:20px;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.6fr) auto;gap:24px 40px;align-items:center;padding:clamp(24px,3vw,36px) clamp(24px,3vw,40px);background:linear-gradient(135deg,#0f1a3a,#0A0E17);color:#fff;border:1px solid rgba(77,182,255,.2)}
-.also h3{font-size:22px;letter-spacing:-.035em;font-weight:600;margin-bottom:6px}
-.also p{color:rgba(255,255,255,.6);font-size:15px}
-.also ul{display:grid;grid-template-columns:repeat(2,1fr);gap:10px 24px}
-.also li{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:500;color:rgba(255,255,255,.9)}
-.also li i{width:28px;height:28px;border-radius:9px;background:rgba(77,182,255,.14);color:var(--accent);display:grid;place-items:center;flex:none}
-.also li i svg{width:15px;height:15px}
-@media (max-width:1100px){.services{grid-template-columns:repeat(2,1fr)}}
-@media (max-width:900px){.also{grid-template-columns:1fr;gap:18px}.also .btn{width:100%}}
-@media (max-width:560px){.services{grid-template-columns:1fr;gap:12px}.svc{min-height:0;padding:24px 22px}.also{padding:22px}.also ul{grid-template-columns:1fr}}
+/* Services — editorial grid of mockups (Yudaev-style), prices at the right of each caption */
+.svcx-sec{background:var(--bg-2);border-radius:var(--sheet-r)}
+.svcx-head{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,.6fr);gap:24px 48px;align-items:end;margin-bottom:clamp(36px,5vw,64px)}
+.svcx-head .sec-num{margin-bottom:14px;padding-top:0}
+.svcx-note{font-size:15px;line-height:1.5;color:var(--muted);max-width:34ch;justify-self:end;padding-bottom:8px}
+.svcx-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(20px,2.4vw,32px) clamp(16px,2vw,24px)}
+.svcx{grid-column:span 2;display:flex;flex-direction:column;gap:18px;min-width:0}
+.svcx.wide{grid-column:span 3}
+.svcx-media{display:block;position:relative;overflow:hidden;border-radius:20px;aspect-ratio:1.42;isolation:isolate;box-shadow:0 1px 0 rgba(0,0,0,.04)}
+.svcx:not(.wide) .svcx-media{aspect-ratio:.95}
+.svcx-media .par{position:absolute;inset:-6% 0;will-change:transform} /* taller than the box so the parallax never shows an edge */
+.svcx-media .frame,.svcx-media .phone{position:absolute;transition:transform 1.2s var(--ease)}
+.svcx-media .frame .view img{transition:none}
+.svcx-media:hover .frame,.svcx-media:hover .phone{transform:translateY(-10px)}
+.m-site{background:radial-gradient(120% 90% at 100% 0%,#24355f 0%,#0b1020 55%,#070a12 100%)}
+.m-site .frame{left:9%;top:18%;width:100%;aspect-ratio:16/10;border-radius:12px 0 0 0}
+.m-landing{background:linear-gradient(160deg,#eef3ef 0%,#d8e4da 100%)}
+.m-landing .frame{left:14%;top:16%;width:100%;aspect-ratio:3/4;box-shadow:0 30px 60px -30px rgba(0,0,0,.35)}
+.m-app{background:radial-gradient(100% 80% at 0% 100%,#dbe7ff 0%,#eef2ff 60%,#f6f7fb 100%)}
+.m-app .phone{width:44%;bottom:-12%;box-shadow:0 40px 60px -30px rgba(20,40,90,.45)}
+.m-app .phone:nth-child(1){left:10%;bottom:-18%}
+.m-app .phone:nth-child(2){left:52%;bottom:-6%}
+.m-app .phone .screen img,.m-landing .frame .view img{width:100%;height:auto}
+.m-admin{background:radial-gradient(120% 90% at 0% 0%,#1e2a46 0%,#0b1020 55%,#070a12 100%)}
+.m-admin .frame{right:-14%;top:16%;width:108%;aspect-ratio:16/10;border-radius:12px}
+.svcx-cap{display:flex;justify-content:space-between;align-items:flex-start;gap:24px}
+.svcx-cap h3{font-size:clamp(19px,1.5vw,22px);letter-spacing:-.035em;font-weight:600;line-height:1.2}
+.svcx-cap p{color:var(--muted);font-size:14.5px;line-height:1.45;margin-top:6px;max-width:46ch;text-wrap:pretty}
+.svcx-price{flex:none;text-align:right;white-space:nowrap;padding-top:2px;font-variant-numeric:tabular-nums}
+.svcx-price b{display:block;font-size:clamp(16px,1.3vw,19px);font-weight:600;letter-spacing:-.025em}
+.svcx-price span{display:block;font-size:13.5px;color:var(--muted);margin-top:4px}
+.svcx-also{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin-top:clamp(40px,5vw,64px);padding-top:28px;border-top:1px solid var(--line)}
+.svcx-also-l{font-size:14px;font-weight:500;color:var(--muted);margin-right:10px}
+.svcx-also ul{display:flex;flex-wrap:wrap;gap:8px}
+.svcx-also li{font-size:14.5px;font-weight:500;padding:8px 14px;border-radius:999px;background:#fff;border:1px solid var(--line);transition:border-color .3s,transform .5s var(--ease)}
+.svcx-also li:hover{border-color:rgba(28,28,30,.25);transform:translateY(-1px)}
+.svcx-cta{display:flex;justify-content:space-between;align-items:center;gap:24px;margin-top:clamp(36px,4vw,56px)}
+.svcx-cta p{font-size:clamp(17px,1.4vw,20px);line-height:1.4;letter-spacing:-.02em;max-width:44ch;text-wrap:balance}
+@media (max-width:900px){
+  .svcx-head{grid-template-columns:1fr}.svcx-note{justify-self:start;max-width:none;padding-bottom:0}
+  .svcx-grid{grid-template-columns:1fr 1fr;gap:20px 14px}.svcx,.svcx.wide{grid-column:span 1}
+  .svcx-media,.svcx:not(.wide) .svcx-media{aspect-ratio:1.1}
+  .svcx-cap{flex-direction:column;gap:6px}.svcx-price{text-align:left}.svcx-cta{flex-direction:column;align-items:flex-start}.svcx-cta .btn{width:100%}
+}
+@media (max-width:560px){.svcx-grid{grid-template-columns:1fr}.svcx-media,.svcx:not(.wide) .svcx-media{aspect-ratio:1.25}.svcx-also li{font-size:13.5px;padding:7px 12px}}
+
+/* next sheet slides over the pinned skills screen (the pin stays on screen one extra viewport) */
+@media (min-width:1024px){
+  .sheet-cover{margin-top:calc(-100vh + 0px);margin-top:-100svh;z-index:3;box-shadow:0 -40px 80px -40px rgba(0,0,0,.5)}
+}
 
 /* ---------- Process ---------- */
 .process{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.7fr);gap:24px;align-items:start}
@@ -661,7 +686,7 @@ body.lb-open{overflow:hidden}
 .page[hidden]{display:none}
 
 /* ---------- Skills: pinned scroll showcase ---------- */
-.skills{position:relative;height:calc(4 * 140vh + 40vh)}
+.skills{position:relative;height:calc(4 * 140vh + 40vh + 100vh)}
 .skills-pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;display:flex;flex-direction:column}
 .skills-head{padding-top:104px;position:relative;z-index:3;pointer-events:none}
 .skills-head .sec-num{color:rgba(255,255,255,.5);margin-bottom:14px;padding-top:0}
