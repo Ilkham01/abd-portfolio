@@ -659,19 +659,17 @@ body.lb-open{overflow:hidden}
 /* scene 1: grid of first screens rising in rows */
 .scene-grid{perspective:1400px}
 .scene-grid figure{width:calc((100% - 2 * 18px) / 3);aspect-ratio:16/10}
-.scene-grid figure.ph{aspect-ratio:9/19.5;width:14%}
+.scene-grid figure.ph{background:none;box-shadow:none;border-radius:0}
+.scene-grid figure.ph img{object-fit:contain}
 /* scene 2: curved arc of slides */
 .scene-arc{perspective:1600px;perspective-origin:50% 50%}
 .scene-arc figure{width:min(30vw,460px);aspect-ratio:16/9;left:50%;top:50%;margin:0;transform-origin:50% 50%}
 /* scene 3: tunnel */
 .scene-tunnel{perspective:900px;perspective-origin:50% 60%}
-.scene-tunnel figure{width:min(22vw,320px);aspect-ratio:4/3;left:50%;top:50%}
+.scene-tunnel figure{left:50%;top:50%}
 /* scene 4: rows */
-.scene-rows .row{position:absolute;left:0;right:0;display:flex;gap:18px;align-items:center;will-change:transform}
-.scene-rows figure{position:relative;flex:none;width:10vw;aspect-ratio:4/5;border-radius:12px}
-.scene-rows figure.tall{width:8.2vw;aspect-ratio:9/16}
-.scene-rows figure.wide{width:17vw;aspect-ratio:16/9}
-.scene-rows .row-a{top:33%}.scene-rows .row-b{top:56%}.scene-rows .row-c{top:80%}
+.scene-rows .row{position:absolute;left:0;display:flex;gap:18px;align-items:center;will-change:transform}
+.scene-rows figure{position:relative;flex:none;border-radius:12px}
 @media (max-width:1023px){
   .skills{height:auto}
   .skills-pin{position:static;height:auto;overflow:visible;padding:72px 0 40px}
@@ -681,17 +679,19 @@ body.lb-open{overflow:hidden}
   .scene::before{content:attr(data-title);display:block;position:sticky;left:0;font-size:14px;color:rgba(255,255,255,.55);margin:14px 0 10px}
   .scene figure{position:relative!important;transform:none!important;opacity:1!important;display:inline-block;vertical-align:top;margin-right:12px;width:68vw;aspect-ratio:16/10;scroll-snap-align:start}
   .scene-arc figure{width:70vw;aspect-ratio:16/9}
-  .scene-tunnel figure{width:46vw;aspect-ratio:4/3}
+  .scene-tunnel figure{width:auto;height:46vw;aspect-ratio:auto;border-radius:10px}
+  .scene-tunnel figure img{width:auto}
+  .scene-grid figure.ph{width:34vw;aspect-ratio:785/1600}
   .scene-rows{overflow:visible;padding:0}
   .scene-rows::before{padding:0 var(--gutter)}
   .scene-rows .row{position:static;overflow-x:auto;padding:0 var(--gutter) 12px;transform:none!important;opacity:1!important}
-  .scene-rows figure{width:34vw}.scene-rows figure.tall{width:30vw}.scene-rows figure.wide{width:60vw}
+  .scene-rows figure{width:34vw;aspect-ratio:4/5}.scene-rows figure.tall{width:30vw;aspect-ratio:9/16}
   .skills-progress,.skw,.skills-meta{display:none}
   .skills-head .h2 br{display:none}
 }
 /* ---------- Stacking cards (sites) ---------- */
 .stack{display:flex;flex-direction:column;gap:24px}
 .stack > *{position:sticky;top:calc(84px + var(--i,0) * 14px);transform-origin:50% 0;will-change:transform,filter}
-.stack .site-big,.stack .sites-small{margin-top:0}
+.stack .site-big{margin-top:0}
 @media (max-width:1023px){.stack > *{position:static}}
 @media (prefers-reduced-motion:reduce){.stack > *{position:static}.scene figure{transform:none!important;opacity:1!important}}

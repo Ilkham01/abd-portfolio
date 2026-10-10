@@ -389,31 +389,45 @@
   if (skills && matchMedia('(min-width:1024px)').matches && !matchMedia('(prefers-reduced-motion:reduce)').matches) {
     const scenes = $$('.scene', skills), word = $('.skw-in', skills), cap = $('.skills-cap', skills), cnt = $('.skills-count b', skills), bars = $$('.skills-progress i', skills);
     const WORDS = ['первые экраны', 'презентации', 'брендинг и мерч', 'креативы для соцсетей'];
-    const CAPS = ['Концепты первых экранов для сайтов и приложений', 'Слайды для курсов, форумов и бизнес-презентаций', 'Логотипы, упаковка, меню и мерч', 'Сторис, посты и обложки для Instagram и YouTube'];
+    const CAPS = ['Концепты первых экранов для сайтов и приложений', 'Слайды для курсов, форумов и бизнес-презентаций', 'Логотипы, упаковка, меню и мерч', 'Сторис и посты для Instagram'];
     const stage = $('.skills-stage', skills);
     const N = scenes.length;
     const ease = t => 1 - Math.pow(1 - t, 3);
     const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
     const smooth = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
-    /* ---- scene 1: grid rising in rows ---- */
-    const g = $$('figure', scenes[0]);
-    const layoutGrid = () => {
+    /* layout box shared by all scenes: everything lives below the heading, with a margin, inside the container */
+    const box = () => {
       const W = stage.clientWidth, H = stage.clientHeight; const pad = Math.max(24, (W - 1320) / 2 + 24);
-      const inner = W - pad * 2; const gridW = inner * 0.72; const cw = (gridW - 36) / 3, ch = cw * 10 / 16; const top0 = H * 0.36;
-      const ph = ch * 2 + 18, pw = ph * 9 / 19.5; const px0 = pad + gridW + (inner - gridW - pw * 2 - 18) / 2 + 9;
-      let k = 0;
-      g.forEach((f, i) => {
-        if (i < 6) { const col = i % 3, row = Math.floor(i / 3); f.style.left = (pad + col * (cw + 18)) + 'px'; f.style.top = (top0 + row * (ch + 18)) + 'px'; f.style.width = cw + 'px'; f.style.height = ch + 'px'; f.dataset.row = row; f.dataset.col = col; }
-        else { f.style.width = pw + 'px'; f.style.height = ph + 'px'; f.style.left = (px0 + k * (pw + 18)) + 'px'; f.style.top = (top0 - 10 + k * 20) + 'px'; f.dataset.row = 0.5 + k * 0.4; f.dataset.col = 3 + k; k++; }
-      });
+      const meta = $('.skills-meta', skills).getBoundingClientRect(), st = stage.getBoundingClientRect();
+      const top = Math.round(meta.bottom - st.top) + 36; const bottom = H - 36;
+      return { W, H, pad, inner: W - pad * 2, top, availH: Math.max(200, bottom - top), cy: top + Math.max(200, bottom - top) / 2 };
     };
-    const drawGrid = (p) => { /* p 0..1 within scene: cards rise in, then the whole grid drifts up and out */
-      g.forEach((f, i) => {
+    const ratio = (f) => { const im = $('img', f); return (+im.getAttribute('width') || 16) / (+im.getAttribute('height') || 10); };
+
+    /* ---- scene 1: 6 screens in a 3×2 grid + 2 phones on the right, equal 18px gaps, nothing cropped on the phones ---- */
+    const g = $$('figure', scenes[0]); const GAP = 18;
+    const layoutGrid = () => {
+      const b = box(); const cards = g.filter(f => !f.classList.contains('ph')), phones = g.filter(f => f.classList.contains('ph'));
+      const pr = phones.length ? ratio(phones[0]) : 0.49; /* phone png width/height */
+      /* start from the height budget, then shrink until the width fits */
+      let ch = (b.availH - GAP) / 2, cw, gridW, ph, pw, total;
+      for (let k = 0; k < 4; k++) {
+        cw = ch * 1.6; gridW = cw * 3 + GAP * 2; ph = ch * 2 + GAP; pw = ph * pr;
+        total = gridW + GAP + phones.length * (pw + GAP);
+        if (total <= b.inner) break; ch *= b.inner / total;
+      }
+      const left = b.pad + (b.inner - total + GAP) / 2; const top = b.top + Math.max(0, (b.availH - ph) / 2);
+      cards.forEach((f, i) => { const col = i % 3, row = Math.floor(i / 3);
+        f.style.left = (left + col * (cw + GAP)) + 'px'; f.style.top = (top + row * (ch + GAP)) + 'px'; f.style.width = cw + 'px'; f.style.height = ch + 'px'; f.dataset.row = row; f.dataset.col = col; });
+      phones.forEach((f, k) => { f.style.width = pw + 'px'; f.style.height = ph + 'px'; f.style.left = (left + gridW + GAP + k * (pw + GAP)) + 'px'; f.style.top = top + 'px'; f.dataset.row = 0.5; f.dataset.col = 3 + k; });
+    };
+    const drawGrid = (p) => { /* cards rise in from below, then settle down and fade out — never crossing the heading */
+      g.forEach((f) => {
         const row = +f.dataset.row, col = +f.dataset.col;
         const d = row * 0.16 + col * 0.05; const t = ease(clamp((p - d) / 0.42, 0, 1));
-        const exit = clamp((p - 0.78) / 0.22, 0, 1);
-        const y = (1 - t) * 160 + exit * -220 * (1 + row * 0.15);
+        const exit = clamp((p - 0.8) / 0.2, 0, 1);
+        const y = (1 - t) * 160 + exit * 120;
         f.style.transform = `translate3d(0,${y}px,0) scale(${0.94 + t * 0.06})`;
         f.style.opacity = t * (1 - exit);
       });
@@ -422,44 +436,58 @@
     /* ---- scene 2: curved arc of slides ---- */
     const arc = $$('figure', scenes[1]); const AN = arc.length;
     const drawArc = (p) => {
-      const W = stage.clientWidth; const R = W * 0.78; const step = 0.38;
+      const b = box(); const R = b.W * 0.78; const step = 0.38;
       const centre = -1.2 + p * (AN + 1.4); /* which slide index is in the middle */
       arc.forEach((f, i) => {
         const a = (i - centre) * step; const vis = Math.abs(a) < Math.PI * 0.62;
         const x = Math.sin(a) * R, z = (Math.cos(a) - 1) * R * 0.9;
         const ry = -a * 0.9; const sc = 0.82 + 0.18 * Math.cos(Math.min(Math.abs(a), 1.5));
         const op = vis ? clamp(1.3 - Math.abs(a) / (Math.PI * 0.55), 0, 1) : 0;
-        f.style.transform = `translate3d(calc(-50% + ${x}px), calc(-50% + ${stage.clientHeight * 0.14}px), ${z}px) rotateY(${ry}rad) scale(${sc})`;
+        f.style.transform = `translate3d(calc(-50% + ${x}px), calc(-50% + ${b.cy - b.H / 2}px), ${z}px) rotateY(${ry}rad) scale(${sc})`;
         f.style.opacity = op; f.style.zIndex = Math.round(100 - Math.abs(a) * 40);
       });
     };
 
-    /* ---- scene 3: tunnel ---- */
+    /* ---- scene 3: tunnel — each piece keeps its own proportions, lanes hug the centre ---- */
     const tun = $$('figure', scenes[2]); const TN = tun.length;
+    const layoutTunnel = () => {
+      const b = box(); const base = Math.min(b.W * 0.215, 320);
+      tun.forEach(f => { const r = ratio(f); let w, h;
+        if (r >= 1) { w = base; h = base / r; } else { h = base * 0.95; w = h * r; }
+        f.style.width = w + 'px'; f.style.height = h + 'px'; });
+      scenes[2].style.perspectiveOrigin = `50% ${b.cy}px`;
+    };
     const drawTunnel = (p) => {
-      const W = stage.clientWidth, H = stage.clientHeight; const depth = 2400; const gap = 170;
+      const b = box(); const gap = 420;
       const travel = p * (TN * gap + 300);
       tun.forEach((f, i) => {
-        const side = i % 2 ? 1 : -1; const lane = Math.floor(i / 2) % 2; /* two lanes per side */
-        let z = -i * gap - 300 + travel;
-        const x = side * (W * 0.3 + lane * 110); const y = H * 0.1 + (lane ? -1 : 1) * H * 0.13 + (i % 3 - 1) * 30;
-        const op = z > 150 ? clamp(1 - (z - 150) / 350, 0, 1) : clamp((z + depth) / 900, 0, 1);
-        f.style.transform = `translate3d(calc(-50% + ${x}px), calc(-50% + ${y}px), ${z}px) rotateY(${-side * 50}deg)`;
-        f.style.opacity = op; f.style.zIndex = Math.round(1000 + z);
+        const side = i % 2 ? 1 : -1; const lane = Math.floor(i / 2) % 2 ? 1 : -1; /* one lane per side, two heights */
+        const z = -i * gap - 300 + travel;
+        const x = side * b.W * 0.18; const y = (b.cy - b.H / 2) + lane * b.availH * 0.24;
+        const op = z > 40 ? clamp(1 - (z - 40) / 80, 0, 1) : clamp((z + 1900) / 900, 0, 1);
+        f.style.transform = `translate3d(calc(-50% + ${x}px), calc(-50% + ${y}px), ${z}px) rotateY(${-side * 35}deg)`;
+        f.style.opacity = op; f.style.zIndex = Math.round(2000 + z);
       });
     };
 
-    /* ---- scene 4: three rows sliding in opposite directions ---- */
+    /* ---- scene 4: three rows below the heading; row 1 slides left, row 2 right, row 3 left ---- */
     const rows = $$('.row', scenes[3]);
+    const layoutRows = () => {
+      const b = box(); const rowH = (b.availH - GAP * (rows.length - 1)) / rows.length;
+      rows.forEach((r, i) => { r.style.top = (b.top + i * (rowH + GAP)) + 'px'; r.style.height = rowH + 'px'; r.style.left = '0'; r.style.right = 'auto';
+        $$('figure', r).forEach(f => { f.style.height = rowH + 'px'; f.style.width = (rowH * ratio(f)) + 'px'; }); });
+    };
     const drawRows = (p) => {
+      const b = box();
       rows.forEach((r, i) => {
-        const dir = i % 2 ? 1 : -1; const w = r.scrollWidth - stage.clientWidth;
-        const x = dir * (w * (0.5 - p) ) + (i === 1 ? 0 : 0);
-        const tilt = (p - 0.5) * (i % 2 ? -6 : 6);
-        r.style.transform = `translate3d(${x}px,0,0) rotate(${tilt * 0.25}deg)`;
+        const dir = i % 2 ? -1 : 1; /* 1 = moves left */
+        const rw = r.scrollWidth; const xc = (b.W - rw) / 2; const travel = Math.max(rw - b.W, 0) + b.W * 0.3;
+        const x = xc + dir * travel * (0.5 - p);
+        r.style.transform = `translate3d(${x}px,0,0)`;
         r.style.opacity = clamp(Math.min(p / 0.12, (1 - p) / 0.12), 0, 1);
       });
     };
+    const layoutAll = () => { layoutGrid(); layoutTunnel(); layoutRows(); };
     const draws = [drawGrid, drawArc, drawTunnel, drawRows];
 
     let active = -1, raf = 0;
@@ -481,7 +509,8 @@
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(render); };
     /* preload scene images a screen and a half before the section pins */
     new IntersectionObserver((en, io) => { if (en[0].isIntersecting) { $$('.scene img', skills).forEach(im => { im.loading = 'eager'; }); io.disconnect(); } }, { rootMargin: '150% 0px' }).observe(skills);
-    layoutGrid(); window.addEventListener('resize', () => { layoutGrid(); onScroll(); });
+    layoutAll(); window.addEventListener('resize', () => { layoutAll(); onScroll(); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { layoutAll(); onScroll(); });
     window.addEventListener('scroll', onScroll, { passive: true }); render();
   } else if (skills) {
     const T = ['Первые экраны', 'Презентации', 'Брендинг', 'Соцсети'];
