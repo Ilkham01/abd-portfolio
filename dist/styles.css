@@ -610,8 +610,9 @@ body.lb-open{overflow:hidden}
 .case-hero{padding:128px 0 56px}
 .case-hero .crumbs{display:flex;gap:8px;align-items:center;font-size:14px;color:rgba(255,255,255,.5);margin-bottom:28px}
 .case-hero .crumbs a:hover{color:#fff}
-.case-hero .h1{color:#fff;max-width:16ch;font-size:clamp(36px,5.6vw,72px)}
-.case-hero .lead{margin-top:22px;max-width:60ch}
+.case-hero .h1{color:#fff;max-width:none;font-size:clamp(36px,4.7vw,68px)}
+@media (min-width:1024px){.case-hero .h1 .dim{white-space:nowrap}}
+.case-hero .lead{margin-top:22px;max-width:80ch;text-wrap:pretty}
 .case-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:44px;padding-top:28px;border-top:1px solid var(--dark-border)}
 .case-meta b{display:block;font-size:13px;color:rgba(255,255,255,.45);font-weight:600;margin-bottom:6px}
 .case-meta span{font-weight:600;font-size:15px;color:#fff}
@@ -796,3 +797,4 @@ body.lb-open{overflow:hidden}
 @media (max-width:1023px){br.m-only{display:inline}}
 .skills-count{white-space:nowrap}
 @media (max-width:400px){.case-hero .h1{font-size:clamp(28px,8.6vw,36px)}}
+html,body{overflow-x:clip}
