@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=9bb7a6d9">
+<link rel="stylesheet" href="styles.css?v=48ee3a13">
 <script>document.documentElement.classList.add('js')</script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script defer src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
@@ -157,11 +157,18 @@
   <div class="container">
     <div class="cs-head">
       <div class="lbl rv">05 — Процесс</div>
-      <div><h2 class="h3 rv">Схемы информационной архитектуры</h2><p class="lead rv rv-d1">Перед экранами — карта разделов приложения и админки: какие сущности есть, кто что видит, откуда куда можно перейти.</p></div>
+      <div><h2 class="h3 rv">Схемы информационной архитектуры</h2></div>
     </div>
-    <div class="shots rv">
-      <figure class="shot figure" data-zoom data-cap="Структура приложения"><div class="im"><img src="assets/autobir-structure.webp" alt="Структура приложения" loading="lazy" width="1600" height="1324"></div><figcaption>Структура приложения</figcaption></figure>
-      <figure class="shot figure tall" data-zoom data-cap="Структура админ-панели"><div class="im"><img src="assets/autobir-admin-structure.webp" alt="Структура админ-панели" loading="lazy" width="2400" height="1306"></div><figcaption>Структура админ-панели — нажмите, чтобы увеличить</figcaption></figure>
+    <div class="map-row">
+      <div class="map-text rv">
+        <p class="lead">Перед экранами собрал две карты: приложение клиента и админ-панель. Какие сущности есть, кто что видит и откуда куда можно перейти.</p>
+        <ul class="map-legend"><li><i class="k-root"></i>Точка входа</li><li><i class="k-node"></i>Экран или раздел</li></ul>
+        <p class="small muted">Нажмите на схему, чтобы открыть крупно.</p>
+      </div>
+      <div class="map-stack">
+        <figure class="map-fig rv rv-d1" data-zoom data-cap="AutoBir — структура приложения клиента"><figcaption>Приложение клиента</figcaption><img src="assets/autobir-app-map.svg" alt="Структура приложения AutoBir" loading="lazy" width="944" height="1308"></figure>
+        <figure class="map-fig rv" data-zoom data-cap="AutoBir — структура админ-панели"><figcaption>Админ-панель</figcaption><img src="assets/autobir-admin-map.svg" alt="Структура админ-панели AutoBir" loading="lazy" width="964" height="390"></figure>
+      </div>
     </div>
   </div>
 </section>

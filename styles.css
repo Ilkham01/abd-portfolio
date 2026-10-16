@@ -634,7 +634,7 @@ body.lb-open{overflow:hidden}
 .cs-head .lbl{font-size:14px;font-weight:500;color:var(--muted);padding-top:8px}
 .cs-head .lbl::before{content:'';display:inline-block;width:22px;height:1px;background:currentColor;vertical-align:middle;margin-right:10px;opacity:.6}
 .cs-head .h3{max-width:24ch}
-.cs-head .lead{margin-top:14px;font-size:17px;color:#3f4652}
+.cs-head .lead{margin-top:14px;font-size:17px;color:#3f4652;max-width:80ch}
 .cs-grid{display:grid;grid-template-columns:180px 1fr;gap:24px}
 .cs-grid > :first-child{grid-column:2}
 .prose{max-width:66ch;color:#3f4652;font-size:17px}
@@ -814,3 +814,21 @@ html,body{overflow-x:clip}
 
 /* nav: resume link for employers, separated from section links */
 .menu-open .mmenu a:nth-child(6){transition-delay:.3s}
+
+/* ---------- IA maps: text left, vector map right ---------- */
+.map-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.9fr);gap:32px 48px;align-items:start}
+.map-text{position:sticky;top:96px}
+.map-text .lead{font-size:17px;color:#3f4652;max-width:none}
+.map-legend{margin-top:22px;display:flex;flex-direction:column;gap:10px;font-size:14px;color:var(--text)}
+.map-legend li{display:flex;align-items:center;gap:10px}
+.map-legend i{width:18px;height:12px;border-radius:4px;border:1px solid #D9DEE7;background:#fff;flex:none}
+.map-legend .k-root{background:#1C1C1E;border-color:#1C1C1E}.map-legend .k-group{background:#EAF3FF;border-color:#BFD8FF}.map-legend .k-cut{background:#FFF3F2;border-color:#F3B4AF}
+.map-text .small{margin-top:18px}
+.map-fig{margin:0;cursor:zoom-in}
+.map-fig img{width:100%;height:auto;display:block}
+.map-fig figcaption{font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px}
+.map-stack{display:flex;flex-direction:column;gap:40px}
+@media (max-width:900px){.map-row{grid-template-columns:1fr}.map-text{position:static}}
+/* ---------- text measure in cases: wider, no orphan words ---------- */
+.prose{max-width:80ch}
+.cs-head .lead,.case-hero .lead,.prose p,.sol p,.hyp p,.fcap,.ans,.step p,.site-body p,.next-case .next-text p,.map-text .lead,.svcx-cap p{text-wrap:balance}
