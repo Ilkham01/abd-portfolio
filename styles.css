@@ -814,7 +814,7 @@ html,body{overflow-x:clip}
 .menu-open .mmenu a:nth-child(6){transition-delay:.3s}
 
 /* ---------- IA maps: text left, vector map right ---------- */
-.map-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.9fr);gap:32px 48px;align-items:start}
+.map-row{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.9fr);gap:32px 40px;align-items:start;margin-left:204px}
 .map-text{position:sticky;top:96px}
 .map-text .lead{font-size:17px;color:#3f4652;max-width:none}
 .map-legend{margin-top:22px;display:flex;flex-direction:column;gap:10px;font-size:14px;color:var(--text)}
@@ -826,13 +826,13 @@ html,body{overflow-x:clip}
 .map-fig img{width:100%;height:auto;display:block}
 .map-fig figcaption{font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px}
 .map-stack{display:flex;flex-direction:column;gap:40px}
-@media (max-width:900px){.map-row{grid-template-columns:1fr}.map-text{position:static}}
+@media (max-width:900px){.map-row{grid-template-columns:1fr;margin-left:0}.map-text{position:static}}
 /* ---------- text measure in cases: wider, no orphan words ---------- */
 .prose{max-width:80ch}
 .cs-head .lead,.case-hero .lead,.prose p,.sol p,.hyp p,.fcap,.ans,.step p,.site-body p,.next-case .next-text p,.map-text .lead,.svcx-cap p{text-wrap:balance}
 
 /* compact side blocks: text left, palette right */
-.cs-grid.with-side{grid-template-columns:180px minmax(0,1.15fr) minmax(0,.85fr);gap:24px 40px;align-items:start}
-.cs-grid.with-side .palette{grid-column:3;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:0}
+.cs-grid.with-side{grid-template-columns:180px minmax(0,1.15fr) minmax(0,.85fr);gap:24px;align-items:start}
+.cs-grid.with-side .palette{grid-column:3;grid-template-columns:repeat(2,1fr);gap:10px;margin:0 0 0 24px}
 .cs-grid.with-side .palette li{min-height:88px;padding:12px}
-@media (max-width:900px){.cs-grid.with-side{grid-template-columns:1fr}.cs-grid.with-side .palette{grid-column:auto;margin-top:20px}}
+@media (max-width:900px){.cs-grid.with-side{grid-template-columns:1fr}.cs-grid.with-side .palette{grid-column:auto;margin:20px 0 0}}
