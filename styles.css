@@ -670,7 +670,19 @@ body.lb-open{overflow:hidden}
 .ba input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;margin:0}
 .ba .lb-tag{position:absolute;top:12px;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.04em;color:#fff;background:rgba(10,14,23,.75);backdrop-filter:blur(6px);pointer-events:none}
 .ba .lb-tag.l{left:12px}.ba .lb-tag.r{right:12px}
-.next-case{display:grid;grid-template-columns:1fr auto;align-items:center;gap:24px;padding:clamp(28px,4vw,48px)}
+.next-case{display:grid;grid-template-columns:minmax(0,1fr) clamp(300px,34%,440px);align-items:center;gap:32px 48px;padding:clamp(28px,4vw,48px);overflow:hidden}
+.next-case .next-text{display:flex;flex-direction:column;align-items:flex-start}
+.next-case .next-text .h3{max-width:22ch}
+.next-case .next-text p{margin-top:12px;font-size:16px;max-width:40ch}
+.next-case .next-text .btn{margin-top:28px}
+.next-case .nv{position:relative;display:flex;align-items:flex-end;justify-content:center;gap:16px;min-height:260px}
+.next-case .nv .frame{width:100%;aspect-ratio:16/10;transition:transform 1s var(--ease)}
+.next-case .nv .phone{width:36%;flex:none;transition:transform 1s var(--ease)}
+.next-case .nv-phones .phone:nth-child(2){margin-bottom:28px}
+.next-case .nv-mix .frame{width:100%}
+.next-case .nv-mix .phone{position:absolute;right:-4%;bottom:-6%;width:30%;box-shadow:0 30px 60px -20px rgba(0,0,0,.6),inset 0 0 0 1px rgba(255,255,255,.1)}
+.next-case:hover .nv .frame,.next-case:hover .nv .phone{transform:translateY(-6px)}
+.next-case:hover .nv-mix .phone{transform:translateY(-10px)}
 .next-case .lbl{font-size:14px;color:var(--muted);font-weight:600;margin-bottom:8px}
 .hyp{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .hyp li{background:var(--bg-2);border-radius:18px;padding:22px 24px;font-size:15px;color:var(--muted)}
@@ -688,7 +700,10 @@ body.lb-open{overflow:hidden}
   .shots.phones.phones-3:has(> :nth-child(4)){grid-template-columns:repeat(2,1fr);gap:12px}
   .hyp{grid-template-columns:1fr;gap:10px}
   .palette{grid-template-columns:repeat(2,1fr)}
-  .next-case{grid-template-columns:1fr}
+  .next-case{grid-template-columns:1fr;gap:28px}
+  .next-case .nv{min-height:0;width:100%}
+  .next-case .nv .phone{width:42%}
+  .next-case .next-text .btn{margin-top:20px}
   .cs{padding:48px 0}
 }
 @media (hover:none){.fcap{display:none}}
