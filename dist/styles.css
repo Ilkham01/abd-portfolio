@@ -798,5 +798,4 @@ body.lb-open{overflow:hidden}
 html,body{overflow-x:clip}
 
 /* nav: resume link for employers, separated from section links */
-.nav .nav-cv{margin-left:6px;padding-left:14px;border-left:1px solid rgba(255,255,255,.14);border-radius:0 999px 999px 0}
 .menu-open .mmenu a:nth-child(6){transition-delay:.3s}
