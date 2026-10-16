@@ -554,7 +554,7 @@ a.wordmark:hover{color:var(--text)}
 
 /* ---------- Final CTA / Footer ---------- */
 .final{padding:clamp(80px,10vw,140px) 0 36px}
-.final{position:relative;isolation:isolate}
+.final{position:relative;isolation:isolate;overflow:clip}
 .final .h2{color:#fff}
 .final .lead{margin:18px 0 0;max-width:52ch;font-size:clamp(15px,1.2vw,17px)}
 .final-row{display:flex;justify-content:space-between;align-items:flex-start;gap:32px 48px;flex-wrap:wrap}
