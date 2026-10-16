@@ -611,9 +611,9 @@ body.lb-open{overflow:hidden}
 .case-hero .h1{color:#fff;max-width:none;font-size:clamp(36px,4.7vw,68px)}
 @media (min-width:1024px){.case-hero .h1 .dim{white-space:nowrap}}
 .case-hero .lead{margin-top:22px;max-width:80ch;text-wrap:pretty}
-.case-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:44px;padding-top:28px;border-top:1px solid var(--dark-border)}
+.case-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:16px 40px;margin-top:44px;padding-top:28px;border-top:1px solid var(--dark-border)}
 .case-meta b{display:block;font-size:13px;color:rgba(255,255,255,.45);font-weight:600;margin-bottom:6px}
-.case-meta span{font-weight:600;font-size:15px;color:#fff}
+.case-meta span{display:block;font-weight:600;font-size:15px;color:#fff;text-wrap:balance;max-width:26ch}
 .case-cover{margin-top:56px}
 .case-cover.cover-dp,.case-cover.cover-site{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:24px;align-items:end}
 .case-cover.cover-phones{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:end;padding:0 8%}
