@@ -633,6 +633,8 @@ body.lb-open{overflow:hidden}
 .cs-head{display:grid;grid-template-columns:180px 1fr;gap:24px;margin-bottom:28px;align-items:start}
 .cs-head .lbl{font-size:14px;font-weight:500;color:var(--muted);padding-top:8px;white-space:nowrap;line-height:1.5}
 .cs-head .lbl b{display:block;font-weight:600;font-variant-numeric:tabular-nums;color:var(--text);margin-bottom:2px}
+/* content of a case section lines up with the heading column, not with the numbering column */
+@media (min-width:901px){.cs-head ~ *:not(.cs-grid){margin-left:204px}}
 .cs-head .h3{max-width:24ch}
 .cs-head .lead{margin-top:14px;font-size:17px;color:#3f4652}
 .cs-grid{display:grid;grid-template-columns:180px 1fr;gap:24px}
