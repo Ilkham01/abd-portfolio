@@ -687,7 +687,7 @@ body.lb-open{overflow:hidden}
 .next-case .nv .phone{width:36%;flex:none;transition:transform 1s var(--ease)}
 .next-case .nv-phones .phone:nth-child(2){margin-bottom:28px}
 .next-case .nv-mix .frame{width:100%}
-.next-case .nv-mix .phone{position:absolute;right:-4%;bottom:-6%;width:30%;box-shadow:0 30px 60px -20px rgba(0,0,0,.6),inset 0 0 0 1px rgba(255,255,255,.1)}
+.next-case .nv-mix .phone{position:absolute;z-index:1;right:-4%;bottom:-6%;width:30%;box-shadow:0 30px 60px -20px rgba(0,0,0,.6),inset 0 0 0 1px rgba(255,255,255,.1)}
 .next-case:hover .nv .frame,.next-case:hover .nv .phone{transform:translateY(-6px)}
 .next-case:hover .nv-mix .phone{transform:translateY(-10px)}
 .next-case .lbl{font-size:14px;color:var(--muted);font-weight:600;margin-bottom:8px}
@@ -709,7 +709,9 @@ body.lb-open{overflow:hidden}
   .palette{grid-template-columns:repeat(2,1fr)}
   .next-case{grid-template-columns:1fr;gap:28px}
   .next-case .nv{min-height:0;width:100%}
-  .next-case .nv .phone{width:42%}
+  .next-case .nv-phones .phone{width:42%}
+  .next-case .nv-mix{margin-top:6%}
+  .next-case .nv-mix .phone{width:28%;right:-2%;bottom:-4%}
   .next-case .next-text .btn{margin-top:20px}
   .cs{padding:48px 0}
 }
