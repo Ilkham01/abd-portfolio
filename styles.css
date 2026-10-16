@@ -277,7 +277,8 @@ a.wordmark:hover{color:var(--text)}
 
 /* ---------- Cards ---------- */
 .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:32px;position:relative;transition:transform .8s var(--ease),box-shadow .8s var(--ease)}
-.card-accent{background:linear-gradient(160deg,#FFFFFF,#E6F0FF)}
+.card-accent{background:var(--dark);color:#fff;border-color:rgba(255,255,255,.08)}
+.card-accent .muted{color:rgba(255,255,255,.62)}
 .card-hover:hover{border-color:rgba(28,28,30,.18)}
 .dark .card-hover:hover{border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.08)}
 .dark .card{background:var(--dark-card);border:1px solid var(--dark-border);box-shadow:none}
@@ -498,11 +499,11 @@ a.wordmark:hover{color:var(--text)}
 .step .t{font-size:14px;font-weight:600;color:var(--muted);white-space:nowrap;padding-top:4px}
 .pay{position:sticky;top:96px}
 .pay .big{font-size:clamp(40px,5vw,60px);font-weight:600;letter-spacing:-.06em;line-height:1;display:flex;align-items:baseline;gap:10px}
-.pay .big em{font-style:normal;color:var(--blue)}
+.pay .big em{font-style:normal;color:rgba(255,255,255,.55)}
 .pay ul{margin-top:20px;display:flex;flex-direction:column;gap:12px}
-.pay li{display:flex;gap:12px;align-items:flex-start;font-size:15px;color:var(--muted)}
+.pay li{display:flex;gap:12px;align-items:flex-start;font-size:15px;color:rgba(255,255,255,.62)}
 .pay li svg{width:20px;height:20px;flex:none;color:var(--blue);margin-top:2px}
-.pay li b{color:var(--text);font-weight:600}
+.pay li b{color:#fff;font-weight:600}
 @media (max-width:900px){.process{grid-template-columns:1fr}.pay{position:static}.step{grid-template-columns:52px 1fr;gap:16px}.step .t{grid-column:2;padding:0}}
 
 /* ---------- About ---------- */
@@ -565,6 +566,12 @@ a.wordmark:hover{color:var(--text)}
 .footer .links{display:flex;gap:20px;flex-wrap:wrap}
 .footer .links a:hover{color:#fff}
 .footer .logo{height:40px}.footer .logo svg{height:34px;width:61px}
+.hero .lead .ln{display:block;text-wrap:balance}
+.footer .totop{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;color:rgba(255,255,255,.5);transition:color .35s ease}
+.footer .totop svg{width:14px;height:14px;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.footer .totop:hover{color:#fff}
+.footer .totop:hover svg{transform:translateY(-2px)}
+@media (max-width:640px){.footer{row-gap:22px}.footer .logo{order:1}.footer .totop{order:1;margin-left:auto;padding:12px 0 12px 12px}.footer .links{order:2;flex:1 1 100%}.footer .copy{order:3;flex:1 1 100%}}
 @media (max-width:640px){.final-actions .btn{flex:1 1 100%}}
 
 /* ---------- Floating buttons ---------- */

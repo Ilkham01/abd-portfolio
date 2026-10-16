@@ -24,6 +24,13 @@
     else { const y = el.getBoundingClientRect().top + window.scrollY - 84; window.scrollTo({ top: y, behavior: reduceMotion ? 'auto' : 'smooth' }); }
   };
   document.addEventListener('click', (e) => {
+    const up = e.target.closest('a.totop');
+    if (up) {
+      e.preventDefault();
+      if (lenis) lenis.scrollTo(0, { duration: 1.6 });
+      else window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+      return;
+    }
     const a = e.target.closest('a[href^="#"]');
     if (!a) return;
     const h = a.getAttribute('href');
