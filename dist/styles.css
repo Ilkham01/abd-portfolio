@@ -551,8 +551,8 @@ a.wordmark:hover{color:var(--text)}
 .faq summary i{width:36px;height:36px;border-radius:50%;background:#fff;box-shadow:var(--shadow);display:grid;place-items:center;flex:none;transition:transform .6s var(--ease),background .4s,color .4s}
 .faq summary i svg{width:16px;height:16px}
 .faq details[open] summary i{transform:rotate(45deg);background:var(--pill);color:#fff}
-.faq .ans{padding:0 0 24px;color:var(--muted);max-width:66ch;font-size:16px;animation:faqIn .6s var(--ease)}
-@keyframes faqIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.faq .ans{padding:0 0 24px;color:var(--muted);max-width:66ch;font-size:16px}
+.faq details{box-sizing:border-box}
 @media (max-width:640px){.faq summary{font-size:17px;padding:18px 0}}
 
 /* ---------- Final CTA / Footer ---------- */
