@@ -117,15 +117,30 @@
   /* ---------- Typing word ---------- */
   const typed = $('.typed');
   if (typed) {
-    const words = (typed.dataset.words || 'сайты,приложения,лендинги').split(',');
+    const pairs = (typed.dataset.words || 'сайты|которые продают').split(',').map(x => x.split('|'));
+    const words = pairs.map(x => x[0]), tails = pairs.map(x => x[1] || '');
+    // second line changes with the noun: soft crossfade while the old word is erased
+    const l2 = $('.hero .h1 .l2');
+    const reserve = () => {
+      if (!l2) return;
+      // measure in place (same frame, no paint): the real line count for each tail at this width
+      const keep = l2.innerHTML; l2.style.minHeight = '0'; let h = 0;
+      tails.forEach(t => { l2.textContent = t; h = Math.max(h, l2.getBoundingClientRect().height); });
+      l2.innerHTML = keep; l2.style.minHeight = Math.ceil(h) + 'px';
+    };
+    const setTail = (i) => {
+      if (!l2 || !tails[i] || l2.textContent.trim() === tails[i]) return;
+      l2.classList.add('swap');
+      setTimeout(() => { l2.textContent = tails[i]; l2.classList.remove('swap'); }, 320);
+    };
     // reserve the width of the longest word so the headline never reflows
     const meas = document.createElement('span'); meas.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;pointer-events:none';
     typed.parentNode.appendChild(meas);
     const twEl = typed.closest('.tw') || typed;
     const measure = () => { let w = 0; words.forEach(x => { meas.textContent = x + ','; w = Math.max(w, meas.getBoundingClientRect().width); }); twEl.style.setProperty('--tw', Math.ceil(w) + 'px'); };
     const cursor = () => { meas.textContent = typed.textContent; typed.style.setProperty('--cw', meas.getBoundingClientRect().width + 'px'); };
-    measure(); window.addEventListener('resize', () => { measure(); cursor(); });
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { measure(); cursor(); });
+    measure(); reserve(); window.addEventListener('resize', () => { measure(); cursor(); reserve(); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { measure(); cursor(); reserve(); });
     if (reduceMotion) typed.textContent = words[0];
     else {
       let wi = 0, ci = words[0].length, del = false;
@@ -138,7 +153,7 @@
           setTimeout(tick, 70 + Math.random() * 50);
         } else {
           ci--; typed.textContent = w.slice(0, ci); cursor();
-          if (ci === 0) { del = false; wi = (wi + 1) % words.length; setTimeout(tick, 340); return; }
+          if (ci === 0) { del = false; wi = (wi + 1) % words.length; setTail(wi); setTimeout(tick, 340); return; }
           setTimeout(tick, 36);
         }
       };
