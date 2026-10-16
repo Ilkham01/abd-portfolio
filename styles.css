@@ -617,7 +617,6 @@ body.lb-open{overflow:hidden}
 .case-cover{margin-top:56px}
 .case-cover.cover-dp,.case-cover.cover-site{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:24px;align-items:end}
 .case-cover.cover-phones{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:end;padding:0 8%}
-.case-cover.cover-phones .phone:nth-child(2),.case-cover.cover-phones .phone:nth-child(3){transform:translateY(-24px)}
 @media (max-width:900px){
   .case-hero{padding:100px 0 40px}
   .case-meta{grid-template-columns:1fr 1fr}
@@ -626,7 +625,6 @@ body.lb-open{overflow:hidden}
   .case-cover.cover-dp .phone,.case-cover.cover-site .phone{display:none}
   .case-cover.cover-phones{grid-template-columns:repeat(2,1fr);padding:0}
   .case-cover.cover-phones .phone:nth-child(n+3){display:none}
-  .case-cover.cover-phones .phone:nth-child(2){transform:none}
 }
 .cs{padding:clamp(40px,5vw,72px) 0}
 .cs + .cs{padding-top:0}
