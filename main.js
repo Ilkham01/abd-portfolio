@@ -706,8 +706,36 @@
   });
 
   /* ---------- FAQ: close others ---------- */
+  // Accordion with animated height: native <details> jumps open/closed, so the
+  // height is driven by the Web Animations API (one easing, one duration, no reflow mid-way).
   const faq = $('.faq');
-  if (faq) faq.addEventListener('toggle', e => { if (e.target.open) $$('details', faq).forEach(d => { if (d !== e.target) d.open = false; }); }, true);
+  if (faq) {
+    const EASE = 'cubic-bezier(.22,1,.36,1)', DUR = reduceMotion ? 0 : 520;
+    const busy = new WeakSet();
+    const expand = (d) => {
+      if (busy.has(d) || d.open) return; busy.add(d);
+      const h0 = d.getBoundingClientRect().height;
+      d.open = true; d.style.overflow = 'hidden';
+      const h1 = d.getBoundingClientRect().height;
+      const a = d.animate([{ height: h0 + 'px' }, { height: h1 + 'px' }], { duration: DUR, easing: EASE });
+      const ans = $('.ans', d); if (ans) ans.animate([{ opacity: 0, transform: 'translateY(-4px)' }, { opacity: 1, transform: 'none' }], { duration: DUR * .9, delay: DUR * .1, easing: 'ease', fill: 'backwards' });
+      a.onfinish = () => { d.style.overflow = ''; busy.delete(d); };
+    };
+    const collapse = (d) => {
+      if (busy.has(d) || !d.open) return; busy.add(d);
+      const h0 = d.getBoundingClientRect().height, h1 = $('summary', d).getBoundingClientRect().height;
+      d.style.overflow = 'hidden';
+      const ans = $('.ans', d); if (ans) ans.animate([{ opacity: 1 }, { opacity: 0 }], { duration: DUR * .45, easing: 'ease', fill: 'forwards' });
+      const a = d.animate([{ height: h0 + 'px' }, { height: h1 + 'px' }], { duration: DUR * .85, easing: EASE });
+      a.onfinish = () => { d.open = false; d.style.overflow = ''; busy.delete(d); if (ans) ans.getAnimations().forEach(x => x.cancel()); };
+    };
+    $$('summary', faq).forEach(sm => sm.addEventListener('click', (e) => {
+      e.preventDefault();
+      const d = sm.parentElement;
+      if (d.open) collapse(d);
+      else { $$('details', faq).forEach(o => { if (o !== d) collapse(o); }); expand(d); }
+    }));
+  }
 
   /* ---------- Copy-to-clipboard for email ---------- */
   $$('[data-copy]').forEach(b => b.addEventListener('click', e => {
