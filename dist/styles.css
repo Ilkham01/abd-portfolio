@@ -630,9 +630,9 @@ body.lb-open{overflow:hidden}
 }
 .cs{padding:clamp(40px,5vw,72px) 0}
 .cs + .cs{padding-top:0}
-.cs-head{display:grid;grid-template-columns:240px 1fr;gap:24px;margin-bottom:28px;align-items:start}
-.cs-head .lbl{font-size:14px;font-weight:500;color:var(--muted);padding-top:8px;white-space:nowrap}
-.cs-head .lbl::before{content:'';display:inline-block;width:22px;height:1px;background:currentColor;vertical-align:middle;margin-right:10px;opacity:.6}
+.cs-head{display:grid;grid-template-columns:180px 1fr;gap:24px;margin-bottom:28px;align-items:start}
+.cs-head .lbl{font-size:14px;font-weight:500;color:var(--muted);padding-top:8px;white-space:nowrap;line-height:1.5}
+.cs-head .lbl b{display:block;font-weight:600;font-variant-numeric:tabular-nums;color:var(--text);margin-bottom:2px}
 .cs-head .h3{max-width:24ch}
 .cs-head .lead{margin-top:14px;font-size:17px;color:#3f4652}
 .cs-grid{display:grid;grid-template-columns:180px 1fr;gap:24px}
