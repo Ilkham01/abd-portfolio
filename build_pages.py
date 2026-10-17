@@ -21,7 +21,7 @@ for path in glob.glob(f'{ROOT}/pages/*.html'):
     h = h.replace('{{sprite}}', sprite)
     out = h + body + foot
     if os.path.basename(path) == 'index.html':
-        out = out.replace('href="index.html#', 'href="#').replace('href="index.html"', 'href="#top"')
+        out = out.replace('href="./#', 'href="#').replace('href="./"', 'href="#top"')
     name = os.path.basename(path)
     open(f'{ROOT}/dist/{name}', 'w').write(out)
     print('built', name, len(out) // 1024, 'KB')
