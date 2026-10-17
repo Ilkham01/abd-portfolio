@@ -7,7 +7,7 @@ touch dist/.nojekyll
 git add -A
 git commit -q -m "${1:-Обновление сайта}" || true
 git push -q origin main
-set -a; . "$HOME/.cf.env"; set +a
+set -a; . /home/claude/.cf.env; set +a
 npx --yes wrangler pages deploy dist --project-name abd-design --branch main --commit-dirty=true 2>&1 | grep -E "Success|Deployment complete|error" || true
 git subtree split --prefix dist -b gh-pages-tmp >/dev/null
 git push -q -f origin gh-pages-tmp:gh-pages
