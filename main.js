@@ -399,7 +399,7 @@
 
   /* ---------- Whole case card is clickable, not only «Смотреть кейс» ---------- */
   $$('.site-big, .case').forEach(card => {
-    const link = $('a.link-arrow[href$=".html"]', card); if (!link) return;
+    const link = $('a.link-arrow:not([href^="http"]):not([href^="#"])', card); if (!link) return;
     card.classList.add('card-link');
     card.addEventListener('click', e => {
       if (e.target.closest('a, button')) return;
