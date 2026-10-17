@@ -12,3 +12,4 @@ shots/
 .DS_Store
 __pycache__/
 .netlify/
+.wrangler/
