@@ -63,6 +63,11 @@ p{text-wrap:pretty}
 .lead{font-size:clamp(17px,1.5vw,20px);line-height:1.5;letter-spacing:-.018em;color:var(--muted);max-width:60ch}
 .small{font-size:15px;line-height:1.5}
 .muted{color:var(--muted)}
+/* Body copy and leads in Light (300); on light backgrounds the grey is a step darker so thin strokes stay legible */
+p,.lead,.ans,.pay li,.step p,.fcard p,.svcx-cap p,.next-case .next-text p{font-weight:300}
+p b,p strong,.lead b,.pay li b{font-weight:600}
+.case p,.step p,.svcx-cap p,.site-body p.muted,.ans,.sec:not(.dark) .sec-head .lead,.faq .ans{color:#5E6775}
+.dark .case p,.pro-card .site-body p.muted{color:rgba(255,255,255,.66)}
 .accent{color:var(--accent)}
 .dim{color:var(--muted-2)}
 .num{font-variant-numeric:tabular-nums}
