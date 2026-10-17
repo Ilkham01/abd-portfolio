@@ -429,7 +429,8 @@ a.wordmark:hover{color:var(--text)}
 .bulb:nth-child(2){animation-delay:-1.6s;animation-duration:7s}.bulb:nth-child(3){animation-delay:-3.1s;animation-duration:6.5s}
 @keyframes sway{0%,100%{transform:rotate(-1.4deg)}50%{transform:rotate(1.4deg)}}
 .pro-card .site-body{padding-top:clamp(28px,4vw,48px);position:relative;z-index:1}
-.pro-card .pro-text{max-width:55%}
+.pro-card .pro-text{max-width:none}
+.pro-card .chip{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85)}
 .bulb-hint{font-size:13px;color:rgba(255,255,255,.45);display:inline-flex;align-items:center;gap:8px;margin-top:10px}
 @media (max-width:900px){.pro-card .pro-text{max-width:none}.bulbs{right:12px;gap:16px;transform:scale(.8);transform-origin:top right}}
 @media (max-width:640px){.bulbs{display:none}.bulb-hint{display:none}}
