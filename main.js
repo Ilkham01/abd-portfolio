@@ -4,6 +4,13 @@
   const $ = (s, c = document) => c.querySelector(s);
   const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const KK = document.documentElement.lang === 'kk';
+  const S = KK ? { close: 'Жабу', prev: 'Артқа', next: 'Алға', copied: 'Көшірілді',
+      words: ['бірінші экрандар', 'презентациялар', 'брендинг және мерч', 'әлеуметтік желіге креативтер'],
+      caps: ['Сайттар мен қосымшаларға арналған бірінші экран концепттері', 'Курстар, форумдар мен бизнес-презентацияларға слайдтар', 'Логотиптер, қаптама, мәзір және мерч', 'Instagram-ға сторис пен посттар'] }
+    : { close: 'Закрыть', prev: 'Назад', next: 'Вперёд', copied: 'Скопировано',
+      words: ['первые экраны', 'презентации', 'брендинг и мерч', 'креативы для соцсетей'],
+      caps: ['Концепты первых экранов для сайтов и приложений', 'Слайды для курсов, форумов и бизнес-презентаций', 'Логотипы, упаковка, меню и мерч', 'Сторис и посты для Instagram'] };
   const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   const isTouch = !canHover;
   document.documentElement.classList.add('js');
@@ -74,7 +81,8 @@
         if (n.nodeType === 3) {
           let t = n.nodeValue;
           /* prepositions / conjunctions / particles stick to the next word */
-          t = t.replace(/(^|[\s(«„"])(а|в|во|и|к|ко|с|со|у|о|об|от|до|за|из|на|не|ни|но|по|бы|же|ли|без|для|над|под|при|про|или|что|как|где|так|уже|ещё|еще)\s+/giu, (m, a, w) => a + w + NB);
+          if (KK) t = t.replace(/\s+(мен|бен|пен|және|да|де|та|те|ма|ме|ба|бе|па|пе|не|я|әрі|үшін|сияқты|туралы|дейін|кейін|бойынша)(?=[\s,.!?»:;]|$)/giu, (m, w) => NB + w);
+          else t = t.replace(/(^|[\s(«„"])(а|в|во|и|к|ко|с|со|у|о|об|от|до|за|из|на|не|ни|но|по|бы|же|ли|без|для|над|под|при|про|или|что|как|где|так|уже|ещё|еще)\s+/giu, (m, a, w) => a + w + NB);
           /* last word of a heading joins the previous one if it is short */
           t = t.replace(/\s+([^\s]{1,4})([»".!?]*)\s*$/u, (m, w, p) => NB + w + p);
           n.nodeValue = t;
@@ -120,7 +128,7 @@
     const pairs = (typed.dataset.words || 'сайты|которые продают').split(',').map(x => x.split('|'));
     const words = pairs.map(x => x[0]), tails = pairs.map(x => x[1] || '');
     // second line changes with the noun: soft crossfade while the old word is erased
-    const l2 = $('.hero .h1 .l2');
+    const l2 = $('.hero .h1 .tail') || $('.hero .h1 .l2');   // the line that changes with the noun (kk: the adjective line before it)
     const reserve = () => {
       if (!l2) return;
       // measure in place (same frame, no paint): the real line count for each tail at this width
@@ -411,7 +419,7 @@
   /* ---------- Lightbox ---------- */
   const lb = document.createElement('div');
   lb.className = 'lb';
-  lb.innerHTML = '<button class="x" aria-label="Закрыть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button><img alt=""><div class="cap"></div>';
+  lb.innerHTML = '<button class="x" aria-label="' + S.close + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button><img alt=""><div class="cap"></div>';
   document.body.appendChild(lb);
   const lbImg = $('img', lb), lbCap = $('.cap', lb);
   function openLb(src, cap) {
@@ -460,8 +468,8 @@
   const skills = $('.skills');
   if (skills && matchMedia('(min-width:1024px)').matches && !matchMedia('(prefers-reduced-motion:reduce)').matches) {
     const scenes = $$('.scene', skills), word = $('.skw-in', skills), cap = $('.skills-cap', skills), cnt = $('.skills-count b', skills), bars = $$('.skills-progress i', skills);
-    const WORDS = ['первые экраны', 'презентации', 'брендинг и мерч', 'креативы для соцсетей'];
-    const CAPS = ['Концепты первых экранов для сайтов и приложений', 'Слайды для курсов, форумов и бизнес-презентаций', 'Логотипы, упаковка, меню и мерч', 'Сторис и посты для Instagram'];
+    const WORDS = S.words;
+    const CAPS = S.caps;
     const stage = $('.skills-stage', skills);
     const N = scenes.length;
     const ease = t => 1 - Math.pow(1 - t, 3);
@@ -589,13 +597,13 @@
     window.addEventListener('scroll', onScroll, { passive: true }); render();
   } else if (skills) {
     /* phones/tablets: the category word changes on its own, and each category shows its works in a self-playing carousel */
-    const WORDS = ['первые экраны', 'презентации', 'брендинг и мерч', 'креативы для соцсетей'];
-    const CAPS = ['Концепты первых экранов для сайтов и приложений', 'Слайды для курсов, форумов и бизнес-презентаций', 'Логотипы, упаковка, меню и мерч', 'Сторис и посты для Instagram'];
+    const WORDS = S.words;
+    const CAPS = S.caps;
     const LIMIT = [8, 10, 12, 12];
     const scenes = $$('.scene', skills), word = $('.skw-in', skills), cap = $('.skills-cap', skills), cnt = $('.skills-count b', skills);
     const box = document.createElement('div'); box.className = 'mcar';
     const nav = document.createElement('div'); nav.className = 'mcar-nav';
-    nav.innerHTML = '<div class="mcar-dots"></div><button class="mcar-btn prev" aria-label="Назад"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button><button class="mcar-btn next" aria-label="Дальше"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>';
+    nav.innerHTML = '<div class="mcar-dots"></div><button class="mcar-btn prev" aria-label="' + S.prev + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button><button class="mcar-btn next" aria-label="' + S.next + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>';
     const dots = $('.mcar-dots', nav);
     const H = Math.round(Math.min(260, Math.max(190, window.innerWidth * 0.56)));
     box.style.setProperty('--mh', H + 'px');
@@ -740,6 +748,6 @@
   /* ---------- Copy-to-clipboard for email ---------- */
   $$('[data-copy]').forEach(b => b.addEventListener('click', e => {
     e.preventDefault();
-    navigator.clipboard && navigator.clipboard.writeText(b.dataset.copy).then(() => { const t = b.textContent; b.textContent = 'Скопировано'; setTimeout(() => b.textContent = t, 1600); });
+    navigator.clipboard && navigator.clipboard.writeText(b.dataset.copy).then(() => { const t = b.textContent; b.textContent = S.copied; setTimeout(() => b.textContent = t, 1600); });
   }));
 })();

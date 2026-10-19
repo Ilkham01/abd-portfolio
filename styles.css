@@ -167,6 +167,20 @@ p b,p strong,.lead b,.pay li b{font-weight:600}
 .nav a{padding:9px 13px;border-radius:999px;font-size:15px;font-weight:400;letter-spacing:-.012em;color:rgba(255,255,255,.72);transition:background .3s,color .3s}
 .nav a:hover{background:rgba(255,255,255,.1);color:#fff}
 .header-cta{display:flex;align-items:center;gap:8px}
+.header .hphone,.header .btn,.nav a,.header .lang{white-space:nowrap}
+/* between the tablet menu and full desktop the row is tight: the phone pill steps out (number stays in the menu and the WhatsApp fab) */
+@media (min-width:901px) and (max-width:1160px){.header .hphone{display:none}}
+@media (min-width:901px) and (max-width:1000px){html[lang="kk"] .nav a{padding:9px 9px}html[lang="kk"] .header .lang{padding:9px 8px}}
+/* language switcher: a quiet nav-style link in the header, a smaller line in the mobile menu */
+.header .lang{padding:9px 12px;border-radius:999px;font-size:14px;font-weight:500;letter-spacing:.02em;text-transform:uppercase;color:rgba(255,255,255,.72);transition:background .3s,color .3s;margin-right:2px}
+.header .lang:hover{background:rgba(255,255,255,.1);color:#fff}
+@media (max-width:900px){.header .lang{display:none}}
+.mmenu a.lang{font-size:18px;font-weight:500;letter-spacing:-.01em;color:rgba(255,255,255,.6);padding:14px 0 0}
+.menu-open .mmenu a:nth-child(7){transition-delay:.33s}
+/* Kazakh headline: the adjective line comes first (and changes), the typed noun sits on the second line */
+html[lang="kk"] .hero .h1 .l2{color:#fff}
+html[lang="kk"] .hero .h1 .l1.tail{color:rgba(255,255,255,.42);transition:opacity .45s ease,transform .6s cubic-bezier(.2,.7,.2,1)}
+html[lang="kk"] .hero .h1 .l1.tail.swap{opacity:0;transform:translateY(8px);transition:opacity .3s ease,transform .3s ease}
 .header .btn-white{min-height:40px;padding:8px 18px;font-size:14.5px}
 .hphone{display:inline-flex;align-items:center;gap:9px;min-height:40px;padding:5px 15px 5px 6px;border-radius:999px;color:#fff;font-size:14.5px;font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:-.01em;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);transition:background .3s,border-color .3s,transform .5s var(--ease)}
 .hphone:hover{background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.3);transform:translateY(-1px)}
