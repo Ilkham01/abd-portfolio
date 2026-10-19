@@ -19,9 +19,18 @@ for path in glob.glob(f'{ROOT}/pages/*.html'):
     for k in ('title', 'description', 'bodyclass'):
         h = h.replace('{{' + k + '}}', attrs.get(k, ''))
     h = h.replace('{{sprite}}', sprite)
+    page_ru = '' if os.path.basename(path) == 'index.html' else os.path.basename(path)[:-5]
+    h = h.replace('{{page_ru}}', page_ru)
     out = h + body + foot
     if os.path.basename(path) == 'index.html':
         out = out.replace('href="./#', 'href="#').replace('href="./"', 'href="#top"')
     name = os.path.basename(path)
     open(f'{ROOT}/dist/{name}', 'w').write(out)
     print('built', name, len(out) // 1024, 'KB')
+
+
+# Kazakh version: dist/kk/*.html from the built Russian pages + the RU→KK dictionary
+import subprocess, sys
+r = subprocess.run([sys.executable, f'{ROOT}/src/i18n/build_kk.py'], capture_output=True, text=True)
+print(r.stdout.strip().splitlines()[-1] if r.stdout.strip() else '', r.stderr.strip())
+if r.returncode: raise SystemExit('kk build failed')
