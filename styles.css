@@ -174,7 +174,8 @@ p b,p strong,.lead b,.pay li b{font-weight:600}
 /* language switcher: a quiet nav-style link in the header, a smaller line in the mobile menu */
 .header .lang{padding:9px 12px;border-radius:999px;font-size:14px;font-weight:500;letter-spacing:.02em;text-transform:uppercase;color:rgba(255,255,255,.72);transition:background .3s,color .3s;margin-right:2px}
 .header .lang:hover{background:rgba(255,255,255,.1);color:#fff}
-@media (max-width:900px){.header .lang{display:none}}
+@media (max-width:900px){.header .lang{padding:8px 7px;font-size:13px;margin-right:0}}
+@media (max-width:380px){.header .lang{padding:8px 5px;font-size:12.5px}}
 .mmenu a.lang{font-size:18px;font-weight:500;letter-spacing:-.01em;color:rgba(255,255,255,.6);padding:14px 0 0}
 .menu-open .mmenu a:nth-child(7){transition-delay:.33s}
 /* Kazakh headline: the adjective line comes first (and changes), the typed noun sits on the second line */
