@@ -56,17 +56,18 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 
 em.ac{font-family:var(--serif-i);font-style:italic;font-weight:400;letter-spacing:0}
 /* pills */
-.pill{display:inline-flex;align-items:center;gap:10px;height:40px;padding:0 18px;border-radius:999px;font-family:var(--font);font-weight:400;font-size:14px;letter-spacing:-.01em;white-space:nowrap;background:var(--paper-2);color:var(--ink);transition:background .25s,color .25s,transform .4s var(--ease)}
-.pill svg{width:14px;height:14px;transition:transform .3s var(--ease)}
+.pill{display:inline-flex;align-items:center;gap:12px;height:52px;padding:0 24px;border-radius:999px;font-family:var(--font);font-weight:400;font-size:17px;letter-spacing:-.01em;white-space:nowrap;background:var(--paper-2);color:var(--ink);transition:background .25s,color .25s,transform .4s var(--ease)}
+.pill svg{width:16px;height:16px;transition:transform .3s var(--ease)}
 .pill.dark{background:var(--ink);color:#fff}
-.pill.sm{height:30px;padding:0 12px;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
-@media(max-width:899px){.pill{height:50px;padding:0 22px;font-size:15px}.pill.sm{height:38px;padding:0 14px;font-size:12px}header .logo{height:38px}.hero-cta{flex-direction:column;align-items:stretch}.hero-cta .pill{justify-content:space-between;height:54px}.band .pill,.close .pill{height:54px;justify-content:space-between}}
+.pill.sm{height:32px;padding:0 14px;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.pill.lg{height:60px;padding:0 30px;font-size:19px}
+@media(max-width:899px){.pill,.pill.lg{height:52px;padding:0 22px;font-size:16px}.pill.sm{height:38px;padding:0 14px;font-size:12px}header .logo{height:38px}.hero-cta{flex-direction:column;align-items:stretch}.hero-cta .pill{justify-content:space-between;height:54px}.band .pill,.close .pill{height:54px;justify-content:space-between}}
 @media(hover:hover){.pill:hover{background:var(--ink);color:#fff}.pill.dark:hover{background:var(--green);color:var(--ink)}.pill:hover svg{transform:translateX(3px)}}
 
 /* header */
 header{position:sticky;top:0;z-index:30;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;padding-top:14px;padding-bottom:14px;pointer-events:none}
 header>*{pointer-events:auto}
-header .logo{height:30px;padding:0 12px;border-radius:999px;background:var(--paper-2);display:inline-flex;align-items:center;font-size:14px;justify-self:start;width:max-content}
+header .logo{height:32px;padding:0 14px;border-radius:999px;background:var(--paper-2);display:inline-flex;align-items:center;font-size:14px;justify-self:start;width:max-content}
 header .logo i{margin-top:2px}
 body.k header .pill,body.k header .logo{background:rgba(255,255,255,.14);color:#fff}
 body.k header .pill.dark{background:#fff;color:var(--ink)}
@@ -275,8 +276,8 @@ footer .legal a{color:rgba(255,255,255,.75)}
       <p class="h1 rise" style="--d:.5s">Бизнес может <em class="ac">больше.</em></p>
       <p class="lede rise" style="--d:.65s">Консалтинг для предпринимателей и торговых центров. Разбираемся в задаче, предлагаем решение и помогаем внедрить его. От анализа до результата.</p>
       <div class="hero-cta rise" style="--d:.8s">
-        <a class="pill dark" href="https://wa.me/77000000000?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%2C%20%D1%85%D0%BE%D1%87%D1%83%20%D0%BE%D0%B1%D1%81%D1%83%D0%B4%D0%B8%D1%82%D1%8C%20%D0%B7%D0%B0%D0%B4%D0%B0%D1%87%D1%83" target="_blank" rel="noopener">Обсудить задачу <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7h10M8 3l4 4-4 4"/></svg></a>
-        <a class="pill" href="#services">Наши услуги</a>
+        <a class="pill dark lg" href="https://wa.me/77000000000?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%2C%20%D1%85%D0%BE%D1%87%D1%83%20%D0%BE%D0%B1%D1%81%D1%83%D0%B4%D0%B8%D1%82%D1%8C%20%D0%B7%D0%B0%D0%B4%D0%B0%D1%87%D1%83" target="_blank" rel="noopener">Обсудить задачу <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7h10M8 3l4 4-4 4"/></svg></a>
+        <a class="pill lg" href="#services">Наши услуги</a>
       </div>
     </div>
     <div class="buddy rise" style="--d:.7s" id="buddy" aria-hidden="true">
@@ -288,7 +289,7 @@ footer .legal a{color:rgba(255,255,255,.75)}
 
 <section class="band wrap">
   <p class="rv">Мы не просто анализируем бизнес. Мы помогаем раскрывать его <em class="ac">потенциал.</em></p>
-  <a class="pill dark rv" style="--d:.15s" href="#about">О компании <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7h10M8 3l4 4-4 4"/></svg></a>
+  <a class="pill dark lg rv" style="--d:.15s" href="#about">О компании <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7h10M8 3l4 4-4 4"/></svg></a>
 </section>
 
 <section id="services" class="sec wrap">
@@ -457,7 +458,7 @@ footer .legal a{color:rgba(255,255,255,.75)}
   </ul>
   <div class="close">
     <h2 class="rv">Напишите. Разберём вашу задачу и скажем, чем можем <em class="ac">помочь.</em></h2>
-    <a class="pill rv" style="--d:.1s" href="https://wa.me/77000000000?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%2C%20%D1%85%D0%BE%D1%87%D1%83%20%D0%BE%D0%B1%D1%81%D1%83%D0%B4%D0%B8%D1%82%D1%8C%20%D0%B7%D0%B0%D0%B4%D0%B0%D1%87%D1%83" target="_blank" rel="noopener">Обсудить задачу <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7h10M8 3l4 4-4 4"/></svg></a>
+    <a class="pill lg rv" style="--d:.1s" href="https://wa.me/77000000000?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%2C%20%D1%85%D0%BE%D1%87%D1%83%20%D0%BE%D0%B1%D1%81%D1%83%D0%B4%D0%B8%D1%82%D1%8C%20%D0%B7%D0%B0%D0%B4%D0%B0%D1%87%D1%83" target="_blank" rel="noopener">Обсудить задачу <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7h10M8 3l4 4-4 4"/></svg></a>
   </div>
   <ul class="contacts">
     <li><span class="eyebrow">Телефон</span><a href="tel:+77000000000">+7 700 000 00 00</a></li>
