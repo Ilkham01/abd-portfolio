@@ -145,12 +145,12 @@ nav .pill.sm{background:var(--paper-2)}
 .about-grid .mission{margin-top:40px;padding-top:24px;border-top:1px solid rgba(7,7,8,.2)}
 .about-grid .mission .eyebrow{display:block;margin-bottom:12px}
 .about-grid .mission p{font-size:20px;line-height:1.4;max-width:560px}
-.big{margin:64px 0 0;font-family:var(--serif);font-weight:400;font-size:clamp(44px,9.4vw,150px);line-height:.95;letter-spacing:-.02em;color:rgba(7,7,8,.22);display:grid}
+.big{margin:40px 0 0;font-family:var(--serif);font-weight:400;font-size:clamp(40px,7.4vw,118px);line-height:1.06;letter-spacing:-.015em;color:rgba(7,7,8,.3);display:grid;gap:0}
 .big span{display:block;opacity:0;transform:translateY(.25em);transition:opacity 1.4s var(--ease),transform 1.4s var(--ease);transition-delay:calc(var(--i)*.18s)}
 .big.on span{opacity:1;transform:none}
-.big span:nth-child(3){color:var(--ink)}
-@media(min-width:900px){.big{margin-top:96px}.big span:nth-child(2){padding-left:12vw}.big span:nth-child(3){padding-left:26vw}}
-@media(max-width:899px){.big{font-size:13.2vw}.big span:nth-child(2){padding-left:10vw}}
+.big span:nth-child(2){color:var(--ink)}
+@media(min-width:900px){.big{margin-top:56px}.big span:nth-child(2){justify-self:end;text-align:right}}
+@media(max-width:899px){.big{font-size:11.6vw}}
 .social{display:grid;grid-template-columns:1fr;gap:24px;margin-top:40px;max-width:980px}
 .social p{margin:0;font-size:17px;line-height:1.5}
 @media(min-width:900px){.about-grid{grid-template-columns:5fr 7fr;gap:96px}.social{grid-template-columns:1fr 1fr;gap:64px;margin-top:56px}}
@@ -168,7 +168,7 @@ nav .pill.sm{background:var(--paper-2)}
 .f-body blockquote .eyebrow{display:block;margin-bottom:14px}
 .f-body blockquote p{color:var(--ink);margin-bottom:12px}
 .f-body blockquote p:last-child{margin-bottom:0}
-@media(min-width:900px){.founder{grid-template-columns:5fr 7fr;gap:96px;align-items:start}.photo{aspect-ratio:auto;height:min(800px,calc(100svh - 120px))}.f-body{position:sticky;top:96px}}
+@media(min-width:900px){.founder{grid-template-columns:5fr 7fr;gap:96px;align-items:stretch}.photo{aspect-ratio:auto;height:auto;min-height:520px}}
 
 /* results + contact: the black block */
 #results{background:var(--ink);color:#fff;border-top:0}
@@ -370,8 +370,8 @@ footer .fnav a{color:rgba(255,255,255,.7)}footer .fnav a:hover{color:#fff}
       <div class="mission rv" style="--d:.16s"><span class="eyebrow">Миссия</span><p>Делать бизнес проще, эффективнее и управляемее — и так способствовать развитию предпринимательства и экономики стран.</p></div>
     </div>
   </div>
-  <div class="sec-top" style="margin:112px 0 0"><span class="eyebrow">Социальная цель</span></div>
-  <p class="big" id="big"><span style="--i:0">1000 судеб.</span><span style="--i:1">1000</span><span style="--i:2">возможностей.</span></p>
+  <div class="sec-top" style="margin:112px 0 0;padding-top:20px;border-top:1px solid rgba(7,7,8,.2)"><span class="eyebrow">Социальная цель</span><span class="eyebrow">1000 судеб</span></div>
+  <p class="big" id="big"><span style="--i:0">1000 судеб.</span><span style="--i:1">1000 возможностей.</span></p>
   <div class="social">
     <p class="rv">Создать бесплатную систему обучения и трудоустройства выпускников детских домов.</p>
     <p class="rv" style="--d:.1s">А в дальнейшем — собственный инвестиционный фонд для поддержки их предпринимательских проектов.</p>
