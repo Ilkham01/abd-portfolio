@@ -31,6 +31,16 @@ for path in glob.glob(f'{ROOT}/pages/*.html'):
 
 # Kazakh version: dist/kk/*.html from the built Russian pages + the RU→KK dictionary
 import subprocess, sys
-r = subprocess.run([sys.executable, f'{ROOT}/src/i18n/build_kk.py'], capture_output=True, text=True)
-print(r.stdout.strip().splitlines()[-1] if r.stdout.strip() else '', r.stderr.strip())
-if r.returncode: raise SystemExit('kk build failed')
+if os.path.exists(f'{ROOT}/src/i18n/build_kk.py'):
+    r = subprocess.run([sys.executable, f'{ROOT}/src/i18n/build_kk.py'], capture_output=True, text=True)
+    print(r.stdout.strip().splitlines()[-1] if r.stdout.strip() else '', r.stderr.strip())
+    if r.returncode: raise SystemExit('kk build failed')
+else:
+    # the RU→KK dictionary lives in src/ (not in git). Without it the Kazakh pages are kept as they are,
+    # only the CSS/JS version stamps are refreshed so they never load stale styles.
+    for p in glob.glob(f'{ROOT}/dist/kk/*.html'):
+        t = open(p).read()
+        t = re.sub(r'styles\.css\?v=[0-9a-f]+', 'styles.css?v=' + _v('styles.css'), t)
+        t = re.sub(r'main\.js\?v=[0-9a-f]+', 'main.js?v=' + _v('main.js'), t)
+        open(p, 'w').write(t)
+    print('kk: dictionary sources not found, Kazakh pages kept, version stamps refreshed')
